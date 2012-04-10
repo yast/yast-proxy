@@ -2,7 +2,7 @@
 
 @HEADER@
 Group:          System/YaST
-License:        GPL v2 or later
+License:        GPL-2.0+
 # should be required by devtools
 BuildRequires:  perl-XML-Writer pkgconfig rpm
 BuildRequires:  update-desktop-files
@@ -11,9 +11,13 @@ BuildRequires:  yast2-devtools yast2-testsuite
 BuildRequires:  yast2
 Requires:       yast2
 
+# we split off that one
+Conflicts:      yast2-network < 2.22.6
+
 PreReq:         /bin/rm
 
 Summary:        YaST2 - Proxy Configuration
+Url:            http://en.opensuse.org/Portal:YaST
 
 %description 
 This package contains the YaST2 component for proxy configuration.
