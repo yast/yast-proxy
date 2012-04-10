@@ -13,7 +13,7 @@
 
 {
 
-textdomain "network";
+textdomain "proxy";
 
 /* The main () */
 y2milestone("----------------------------------------");

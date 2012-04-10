@@ -13,13 +13,12 @@
 {
 
 module "Proxy";
-textdomain "network";
+textdomain "proxy";
 
 import "Summary";
 import "Progress";
-
-include "network/routines.ycp";
-include "network/runtime.ycp";
+import "Mode";
+import "Popup";
 
 global boolean proposal_valid = false;
 global boolean write_only = false;
@@ -41,11 +40,28 @@ global string pass = "";
  * Display popup at the end of the proxy configuration
  * @param modified true if proxy settings have been modified
  */
-define void ProxyFinishPopup(boolean modified) ``{
+void ProxyFinishPopup(boolean modified) {
+    if(!modified) return;
 
-string text = _("It is recommended to relogin to make new proxy settings effective.");
+    /* Popup headline */
+    string head = _("Proxy Configuration Successfully Saved");
+    string text = _("It is recommended to relogin to make new proxy settings effective.");
+    Popup::AnyMessage(head, text);
+}
 
-    FinishPopup(modified, "proxy", text, "", []);
+/**
+ * Create comment for changed file
+ * @param modul YaST2 module changing the file
+ * @return comment
+ * @example ChangedComment("lan") -> # Changed by YaST2 module lan 1.1.2000"
+ */
+string ChangedComment(string modul) {
+    string ret = "\n# Changed by YaST2";
+    if(modul != nil && modul != "") ret = ret + " module " + modul;
+    map out = (map)SCR::Execute(.target.bash_output, "/bin/date '+%x'");
+    string date = out["stdout"]:"";
+    if(date != "") ret = ret + " " + date;
+    return ret;
 }
 
 /**
@@ -118,7 +134,8 @@ global define boolean Write() {
 
     Progress::New(caption, " ", size(steps), steps, [], "");
 
-    ProgressNextStage(_("Updating proxy configuration..."));
+    Progress::NextStage();
+    Progress::Title(_("Updating proxy configuration..."));
 
     /* Update /etc/sysconfig/proxy */
     SCR::Write(.sysconfig.proxy.PROXY_ENABLED, enabled?"yes":"no");

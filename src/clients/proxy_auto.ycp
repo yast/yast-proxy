@@ -21,7 +21,7 @@
 
 {
 
-textdomain "network";
+textdomain "proxy";
 
 y2milestone("----------------------------------------");
 y2milestone("Proxy auto started");
