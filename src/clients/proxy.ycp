@@ -32,8 +32,7 @@ define boolean Modified() {
 }
 
 any ProxyGUI() {
-    include "network/runtime.ycp";
-    include "network/services/proxy.ycp";
+    include "proxy/dialogs.ycp";
 
     Proxy::Read ();
 

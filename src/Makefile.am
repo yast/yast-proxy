@@ -1,1 +1,1 @@
-SUBDIRS = clients modules
+SUBDIRS = clients include modules

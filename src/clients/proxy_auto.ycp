@@ -30,7 +30,7 @@ import "Proxy";
 import "Wizard";
 import "Summary";
 
-include "network/services/proxy.ycp";
+include "proxy/dialogs.ycp";
 
 /**
  * Return a modification status

@@ -53,7 +53,7 @@ if(func == "MakeProposal") {
 /* run the module */
 else if(func == "AskUser") {
 
-    include "network/services/proxy.ycp";
+    include "proxy/dialogs.ycp";
 
     map stored = Proxy::Export();
 
