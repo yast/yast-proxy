@@ -36,6 +36,7 @@ This package contains the YaST2 component for proxy configuration.
 @clientdir@/*.ycp
 @moduledir@/*.ycp
 @moduledir@/*.ybc
+@yncludedir@/proxy
 @desktopdir@/*.desktop
 @scrconfdir@/*.scr
 @schemadir@/autoyast/rnc/proxy.rnc
