@@ -23,6 +23,8 @@ import "Label";
 import "Proxy";
 import "Wizard";
 
+include "proxy/dialogs.ycp";
+
 /**
  * Return a modification status
  * @return true if data was modified
@@ -32,8 +34,6 @@ define boolean Modified() {
 }
 
 any ProxyGUI() {
-    include "proxy/dialogs.ycp";
-
     Proxy::Read ();
 
     Wizard::CreateDialog();
