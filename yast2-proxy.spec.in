@@ -17,6 +17,8 @@ Conflicts:      yast2-network < 2.22.6
 PreReq:         /bin/rm
 BuildArch:      noarch
 
+Requires:       yast2-ruby-bindings >= 1.0.0
+
 Summary:        YaST2 - Proxy Configuration
 Url:            http://en.opensuse.org/Portal:YaST
 
@@ -33,9 +35,8 @@ This package contains the YaST2 component for proxy configuration.
 
 %files
 %defattr(-,root,root)
-@clientdir@/*.ycp
-@moduledir@/*.ycp
-@moduledir@/*.ybc
+@clientdir@/*.rb
+@moduledir@/*.rb
 @yncludedir@/proxy
 @desktopdir@/*.desktop
 @scrconfdir@/*.scr
