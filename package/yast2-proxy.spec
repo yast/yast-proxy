@@ -69,6 +69,5 @@ This package contains the YaST2 component for proxy configuration.
 
 %dir %{yast_docdir}
 %{yast_docdir}/COPYING
-%readme %{yast_docdir}/README
 
 %changelog
