@@ -1,0 +1,31 @@
+* Rebuilt URL to: http://example.com/
+* Adding handle: conn: 0x17605e0
+* Adding handle: send: 0
+* Adding handle: recv: 0
+* Curl_addHandleToPipeline: length: 1
+* - Conn 0 (0x17605e0) send_pipe: 1, recv_pipe: 0
+* About to connect() to proxy localhost port 8000 (#0)
+*   Trying ::1...
+* Spojení odmítnuto
+*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 8000 (#0)
+> HEAD http://example.com/ HTTP/1.1
+> User-Agent: curl/7.32.0
+> Host: example.com
+> Accept: */*
+> Proxy-Connection: Keep-Alive
+>
+< HTTP/1.1 301 Moved Permanently
+* HTTP/1.1 proxy connection set close!
+< Proxy-Connection: close
+< Connection: close
+* Server nginx/1.6.0 is not blacklisted
+< Server: nginx/1.6.0
+< Date: Tue, 07 Oct 2014 14:48:49 GMT
+< Content-Type: text/html
+< Content-Length: 184
+< Location: http://www.example.com/
+< X-Frame-Options: sameorigin
+< Via: 1.1 proxy.example.org:8000
+<
+* Closing connection 0
