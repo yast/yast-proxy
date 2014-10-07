@@ -101,7 +101,7 @@ module Yast
       details = _("No details available.") if Builtins.size(details) == 0
 
       # A push button
-      detailsStringOn = _("&Details <<")
+      detailsStringOn = _("&Details <" + "<") # avoid confusing Emacs
       # A push button
       detailsStringOff = _("&Details >>")
 
