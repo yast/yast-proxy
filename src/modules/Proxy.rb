@@ -58,7 +58,7 @@ module Yast
     def ChangedComment(modul)
       ret = "\n# Changed by YaST2"
       if modul != nil && modul != ""
-        ret = Ops.add(Ops.add(ret, " module "), modul)
+        ret = Ops.add(ret + " module ", modul)
       end
       out = Convert.to_map(
         SCR.Execute(path(".target.bash_output"), "/bin/date '+%x'")
