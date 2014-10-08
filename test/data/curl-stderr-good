@@ -6,7 +6,7 @@
 * - Conn 0 (0x17605e0) send_pipe: 1, recv_pipe: 0
 * About to connect() to proxy localhost port 8000 (#0)
 *   Trying ::1...
-* Spojení odmítnuto
+* Connection refused
 *   Trying 127.0.0.1...
 * Connected to localhost (127.0.0.1) port 8000 (#0)
 > HEAD http://example.com/ HTTP/1.1

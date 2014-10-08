@@ -6,9 +6,9 @@
 * - Conn 0 (0x22da5e0) send_pipe: 1, recv_pipe: 0
 * About to connect() to proxy localhost port 9000 (#0)
 *   Trying ::1...
-* Spojení odmítnuto
+* Connection refused
 *   Trying 127.0.0.1...
-* Spojení odmítnuto
-* Failed connect to example.com:9000; Spojení odmítnuto
+* Connection refused
+* Failed connect to example.com:9000; Connection refused
 * Closing connection 0
 
