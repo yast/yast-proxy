@@ -30,6 +30,7 @@ BuildRequires:  perl-XML-Writer pkgconfig rpm
 BuildRequires:  update-desktop-files
 BuildRequires:  yast2-testsuite
 BuildRequires:  yast2-devtools >= 3.1.10
+BuildRequires:  rubygem(rspec)
 
 BuildRequires:  yast2
 Requires:       yast2
