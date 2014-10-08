@@ -13,7 +13,7 @@ describe "Yast::ProxyDialogsInclude" do
   let(:datadir) { File.expand_path("../data", __FILE__) }
 
   describe "#TestProxyReturnCode" do
-    it "returns truthy for a good response" do
+    it "returns truthy (without pop-up) for a good response" do
       proxy_kind = "HTTP"
       stderr = File.read(datadir + "/curl-stderr-good")
 
@@ -21,7 +21,7 @@ describe "Yast::ProxyDialogsInclude" do
       expect(!! subject.TestProxyReturnCode(proxy_kind, stderr)).to eq true
     end
 
-    it "returns falsey and pops up for a bad response at destination" do
+    it "returns falsey (with pop-up) for a bad response at destination" do
       proxy_kind = "HTTP"
       stderr = File.read(datadir + "/curl-stderr-notfound")
 
@@ -31,7 +31,7 @@ describe "Yast::ProxyDialogsInclude" do
       expect(!! subject.TestProxyReturnCode(proxy_kind, stderr)).to eq false
     end
 
-    it "returns falsey and pops up for a bad response at proxy" do
+    it "returns falsey (with pop-up) for a bad response at proxy" do
       proxy_kind = "HTTP"
       stderr = File.read(datadir + "/curl-stderr-badproxy")
 
