@@ -25,7 +25,9 @@ describe "Yast::ProxyDialogsInclude" do
       proxy_kind = "HTTP"
       stderr = File.read(datadir + "/curl-stderr-notfound")
 
-      expect(subject).to receive(:ErrorPopupGeneric).with(String, String)
+      expect(subject).
+        to receive(:ErrorPopupGeneric).
+        with(kind_of(String), kind_of(String))
       expect(!! subject.TestProxyReturnCode(proxy_kind, stderr)).to eq false
     end
 
@@ -33,7 +35,9 @@ describe "Yast::ProxyDialogsInclude" do
       proxy_kind = "HTTP"
       stderr = File.read(datadir + "/curl-stderr-badproxy")
 
-      expect(subject).to receive(:ErrorPopupGeneric).with(String, String)
+      expect(subject).
+        to receive(:ErrorPopupGeneric).
+        with(kind_of(String), kind_of(String))
       expect(!! subject.TestProxyReturnCode(proxy_kind, stderr)).to eq false
     end
   end
