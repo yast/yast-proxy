@@ -1,0 +1,34 @@
+* Adding handle: conn: 0x720630
+* Adding handle: send: 0
+* Adding handle: recv: 0
+* Curl_addHandleToPipeline: length: 1
+* - Conn 0 (0x720630) send_pipe: 1, recv_pipe: 0
+* About to connect() to proxy localhost port 8000 (#0)
+*   Trying ::1...
+* Connection refused
+*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 8000 (#0)
+> HEAD http://www.example.com/nosuchpage HTTP/1.1
+> User-Agent: curl/7.32.0
+> Host: www.example.com
+> Accept: */*
+> Proxy-Connection: Keep-Alive
+> 
+< HTTP/1.1 404 Not Found 
+* HTTP/1.1 proxy connection set close!
+< Proxy-Connection: close
+< Connection: close
+* Server nginx/1.6.0 is not blacklisted
+< Server: nginx/1.6.0
+< Date: Tue, 07 Oct 2014 15:25:16 GMT
+< Content-Type: text/html; charset=UTF-8
+< Vary: Accept-Encoding
+< X-Xrds-Location: http://id.example.com/yadis
+< Cache-Control: max-age=0, no-cache, no-store, must-revalidate
+< Expires: Tue, 07 Oct 2014 15:25:16 GMT
+< Pragma: no-cache
+< Via: 1.1 proxy.example.org:8000
+< Content-Length: 0
+< 
+* Closing connection 0
+

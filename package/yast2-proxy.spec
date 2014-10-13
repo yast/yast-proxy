@@ -17,7 +17,7 @@
 
 
 Name:           yast2-proxy
-Version:        3.1.1
+Version:        3.1.2
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -30,6 +30,7 @@ BuildRequires:  perl-XML-Writer pkgconfig rpm
 BuildRequires:  update-desktop-files
 BuildRequires:  yast2-testsuite
 BuildRequires:  yast2-devtools >= 3.1.10
+BuildRequires:  rubygem(rspec)
 
 BuildRequires:  yast2
 Requires:       yast2
