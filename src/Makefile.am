@@ -5,7 +5,6 @@ module_DATA = \
 
 client_DATA = \
   clients/proxy_auto.rb \
-  clients/proxy_proposal.rb \
   clients/proxy.rb
 
 yncludedir = @yncludedir@/proxy

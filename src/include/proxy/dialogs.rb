@@ -101,7 +101,7 @@ module Yast
       details = _("No details available.") if Builtins.size(details) == 0
 
       # A push button
-      detailsStringOn = _("&Details <<")
+      detailsStringOn = _("&Details <" + "<") # avoid confusing Emacs
       # A push button
       detailsStringOff = _("&Details >>")
 
@@ -152,7 +152,8 @@ module Yast
       nil
     end
 
-    # Function checks the proxy-return code.
+    # Function checks the proxy-return code and displays a pop-up
+    # if the code means an error.
     #
     # @param [String] test_type HTTP, HTTPS or FTP
     # @param [String] proxy_ret_stderr such as "HTTP/1.0 403 Forbidden"
@@ -160,7 +161,7 @@ module Yast
     def TestProxyReturnCode(test_type, proxy_ret_stderr)
       proxy_retcode = ""
       # getting the return code string from the stderr
-      Builtins.foreach(Builtins.splitstring(proxy_ret_stderr, " ?\n")) do |proxy_stderr|
+      Builtins.foreach(Builtins.splitstring(proxy_ret_stderr, "\r?\n")) do |proxy_stderr|
         if Builtins.regexpmatch(proxy_stderr, "HTTP/[0-9.]+ [0-9]+")
           proxy_retcode = Builtins.regexpsub(proxy_stderr, ".*(HTTP.*)", "\\1")
         end

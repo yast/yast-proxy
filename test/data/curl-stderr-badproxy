@@ -1,0 +1,14 @@
+* Rebuilt URL to: http://example.com/
+* Adding handle: conn: 0x22da5e0
+* Adding handle: send: 0
+* Adding handle: recv: 0
+* Curl_addHandleToPipeline: length: 1
+* - Conn 0 (0x22da5e0) send_pipe: 1, recv_pipe: 0
+* About to connect() to proxy localhost port 9000 (#0)
+*   Trying ::1...
+* Connection refused
+*   Trying 127.0.0.1...
+* Connection refused
+* Failed connect to example.com:9000; Connection refused
+* Closing connection 0
+
