@@ -117,37 +117,16 @@ module Yast
       true
     end
 
-    # Write routing settings and apply changes
-    # @return true if success
-    def Write
-      Builtins.y2milestone("Writing configuration")
-      if !@modified
-        Builtins.y2milestone(
-          "No changes to proxy configuration -> nothing to write"
-        )
-        return true
-      end
-
-      steps = [_("Update proxy configuration")]
-
-      caption = _("Saving Proxy Configuration")
-      # sleep for longer time, so that progress does not disappear right afterwards
-      # but only when Progress is visible
-      sl = Progress.status == true ? 500 : 0
-
-      Progress.New(caption, " ", Builtins.size(steps), steps, [], "")
-
-      Progress.NextStage
-      Progress.Title(_("Updating proxy configuration..."))
-
-      # Update /etc/sysconfig/proxy
+    def WriteSysconfig
       SCR.Write(path(".sysconfig.proxy.PROXY_ENABLED"), @enabled ? "yes" : "no")
       SCR.Write(path(".sysconfig.proxy.HTTP_PROXY"), @http)
       SCR.Write(path(".sysconfig.proxy.HTTPS_PROXY"), @https)
       SCR.Write(path(".sysconfig.proxy.FTP_PROXY"), @ftp)
       SCR.Write(path(".sysconfig.proxy.NO_PROXY"), @no)
       SCR.Write(path(".sysconfig.proxy"), nil)
+    end
 
+    def WriteCurlrc
       # proxy is used, write /root/.curlrc
       # bugzilla #305163
       if @enabled
@@ -200,6 +179,35 @@ module Yast
       end
 
       SCR.Write(path(".root.curlrc"), nil)
+    end
+
+    # Write proxy settings and apply changes
+    # @return true if success
+    def Write
+      Builtins.y2milestone("Writing configuration")
+      if !@modified
+        Builtins.y2milestone(
+          "No changes to proxy configuration -> nothing to write"
+        )
+        return true
+      end
+
+      steps = [_("Update proxy configuration")]
+
+      caption = _("Saving Proxy Configuration")
+      # sleep for longer time, so that progress does not disappear right afterwards
+      # but only when Progress is visible
+      sl = Progress.status == true ? 500 : 0
+
+      Progress.New(caption, " ", Builtins.size(steps), steps, [], "")
+
+      Progress.NextStage
+      Progress.Title(_("Updating proxy configuration..."))
+
+      # Update /etc/sysconfig/proxy
+      WriteSysconfig()
+
+      WriteCurlrc()
       Builtins.sleep(sl)
       Progress.NextStage
 
