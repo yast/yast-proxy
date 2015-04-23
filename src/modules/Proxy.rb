@@ -144,9 +144,9 @@ module Yast
       options = {
         "--proxy-user" => proxyuser,
         # bnc#305163
-        "--proxy" =>      @http,
+        "--proxy"      => @http,
         # bsc#923788
-        "--noproxy" =>    @no
+        "--noproxy"    => @no
       }
 
       # proxy is used, write /root/.curlrc

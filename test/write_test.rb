@@ -22,7 +22,7 @@ describe "Yast::ProxyClass" do
     end
 
     it "writes proxy settings, and a comment, when proxy is enabled" do
-      subject.Import({ "enabled" =>    true,
+      subject.Import({ "enabled"    => true,
                        "http_proxy" => "proxy.example.org:3128" })
 
       expect(Yast::SCR).to receive(:Write).
@@ -49,9 +49,9 @@ describe "Yast::ProxyClass" do
     end
 
     it "writes a no-proxy setting" do
-      subject.Import({ "enabled" =>    true,
+      subject.Import({ "enabled"    => true,
                        "http_proxy" => "proxy.example.org:3128",
-                       "no_proxy" =>   "example.org,example.com,localhost" })
+                       "no_proxy"   => "example.org,example.com,localhost" })
       expect(Yast::SCR).to receive(:Write).
         with(path(".root.curlrc.\"--noproxy\""),
              "example.org,example.com,localhost").
@@ -65,9 +65,9 @@ describe "Yast::ProxyClass" do
     end
 
     it "escapes user name" do
-      subject.Import({ "enabled" =>        true,
-                       "http_proxy" =>     "proxy.example.org:3128",
-                       "proxy_user" =>     "User\\Domain",
+      subject.Import({ "enabled"        => true,
+                       "http_proxy"     => "proxy.example.org:3128",
+                       "proxy_user"     => "User\\Domain",
                        "proxy_password" => "P" })
 
       expect(Yast::SCR).to receive(:Write).
