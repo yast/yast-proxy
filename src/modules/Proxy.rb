@@ -126,56 +126,47 @@ module Yast
       SCR.Write(path(".sysconfig.proxy"), nil)
     end
 
+    # Escape backslash characters in .curlrc (bnc#331038)
+    # see also http://curl.haxx.se/docs/manpage.html#-K for escaping rules
+    def EscapeForCurlrc(s)
+      Builtins.mergestring(Builtins.splitstring(s, "\\"),
+                           "\\\\")
+    end
+
     def WriteCurlrc
+      proxyuser = nil
+      if @user != ""
+        @user = EscapeForCurlrc(@user)
+        proxyuser = @user
+        proxyuser = @user + ":" + @pass if @pass != ""
+      end
+
+      options = {
+        "--proxy-user" => proxyuser,
+        # bnc#305163
+        "--proxy" =>      @http
+      }
+
       # proxy is used, write /root/.curlrc
-      # bugzilla #305163
       if @enabled
-        # Update /root/.curlrc
-        proxyuser = nil
-        if @user != ""
-          #Escape backslash characters in .curlrc (#331038)
-          @user = Builtins.mergestring(
-            Builtins.splitstring(@user, "\\"),
-            "\\\\"
-          )
-          proxyuser = @user
-          proxyuser = Ops.add(Ops.add(@user, ":"), @pass) if @pass != ""
+        write_comment = true
+
+        options.each do |option, value|
+          value = nil if value == ""
+
+          SCR.Write(path(".root.curlrc") + option, value)
+
+          if value != nil && write_comment
+            SCR.Write(path(".root.curlrc") + option + "comment",
+                      ChangedComment("proxy"))
+            write_comment = false
+          end
         end
-
-        # nil or real value
-        SCR.Write(Builtins.add(path(".root.curlrc"), "--proxy-user"), proxyuser)
-
-        # not 'nil', not empty
-        # bugzilla #305163
-        if @http != nil && Ops.greater_than(Builtins.size(@http), 0)
-          SCR.Write(Builtins.add(path(".root.curlrc"), "--proxy"), @http)
-        else
-          SCR.Write(Builtins.add(path(".root.curlrc"), "--proxy"), nil)
-        end
-
-        # only written value can have a comment
-        if proxyuser != nil
-          SCR.Write(
-            Builtins.add(
-              Builtins.add(path(".root.curlrc"), "--proxy-user"),
-              "comment"
-            ),
-            ChangedComment("proxy")
-          ) 
-          # only when set, can have a comment
-        elsif @http != nil && Ops.greater_than(Builtins.size(@http), 0)
-          SCR.Write(
-            Builtins.add(
-              Builtins.add(path(".root.curlrc"), "--proxy"),
-              "comment"
-            ),
-            ChangedComment("proxy")
-          )
-        end 
         # proxy is not used, remove proxy-related settings
       else
-        SCR.Write(Builtins.add(path(".root.curlrc"), "--proxy-user"), nil)
-        SCR.Write(Builtins.add(path(".root.curlrc"), "--proxy"), nil)
+        options.each_key do |option|
+          SCR.Write(path(".root.curlrc") + option, nil)
+        end
       end
 
       SCR.Write(path(".root.curlrc"), nil)
