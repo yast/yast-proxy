@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Apr  9 15:35:53 UTC 2015 - mvidner@suse.com
+
+- Write also --noproxy to .curlrc otherwise it is ignored even if
+  set in the environment (bsc#923788).
+- 3.1.4
+
+-------------------------------------------------------------------
 Thu Dec  4 09:51:05 UTC 2014 - jreidinger@suse.com
 
 - remove X-KDE-Library from desktop file (bnc#899104)
