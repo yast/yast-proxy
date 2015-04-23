@@ -33,6 +33,10 @@ describe "Yast::ProxyClass" do
         with(path(".root.curlrc.\"--proxy\""), "proxy.example.org:3128").
         once.and_return true
 
+      expect(Yast::SCR).to receive(:Write).
+        with(path(".root.curlrc.\"--noproxy\""), "localhost").
+        once.and_return true
+
       allow(Yast::SCR).to receive(:Write).
         with(path_matching(/^\.root\.curlrc/), nil).
         and_return true
@@ -40,6 +44,22 @@ describe "Yast::ProxyClass" do
       expect(Yast::SCR).to receive(:Write).
         with(path(".root.curlrc"), nil).
         once.and_return true
+
+      expect(subject.WriteCurlrc).to be true
+    end
+
+    it "writes a no-proxy setting" do
+      subject.Import({ "enabled" =>    true,
+                       "http_proxy" => "proxy.example.org:3128",
+                       "no_proxy" =>   "example.org,example.com,localhost" })
+      expect(Yast::SCR).to receive(:Write).
+        with(path(".root.curlrc.\"--noproxy\""),
+             "example.org,example.com,localhost").
+        once.and_return true
+
+      allow(Yast::SCR).to receive(:Write).
+        with(path_matching(/^\.root\.curlrc/), anything).
+        and_return true
 
       expect(subject.WriteCurlrc).to be true
     end
