@@ -129,6 +129,7 @@ module Yast
     # Escape backslash characters in .curlrc (bnc#331038)
     # see also http://curl.haxx.se/docs/manpage.html#-K for escaping rules
     def EscapeForCurlrc(s)
+      return nil if s.nil?
       Builtins.mergestring(Builtins.splitstring(s, "\\"),
                            "\\\\")
     end
@@ -136,7 +137,6 @@ module Yast
     def WriteCurlrc
       proxyuser = nil
       if @user != ""
-        @user = EscapeForCurlrc(@user)
         proxyuser = @user
         proxyuser = @user + ":" + @pass if @pass != ""
       end
@@ -156,7 +156,7 @@ module Yast
         options.each do |option, value|
           value = nil if value == ""
 
-          SCR.Write(path(".root.curlrc") + option, value)
+          SCR.Write(path(".root.curlrc") + option, EscapeForCurlrc(value))
 
           if value != nil && write_comment
             SCR.Write(path(".root.curlrc") + option + "comment",
