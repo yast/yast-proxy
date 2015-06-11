@@ -9,8 +9,8 @@ before_install:
 script:
     - rake check:syntax
     - rake check:pot
+    - COVERAGE=1 rake test:unit
     - make -f Makefile.cvs
     - make
     - sudo make install
-    - COVERAGE=1 make check
-
+    - make check
