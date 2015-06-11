@@ -62,6 +62,7 @@ This package contains the YaST2 component for proxy configuration.
 %files
 %defattr(-,root,root)
 %{yast_clientdir}/*.rb
+%{yast_libdir}/proxy
 %{yast_moduledir}/*.rb
 %{yast_yncludedir}/proxy
 %{yast_desktopdir}/*.desktop
