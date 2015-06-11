@@ -136,9 +136,9 @@ module Yast
 
     def WriteCurlrc
       proxyuser = nil
-      if @user != ""
+      if @user && !@user.empty?
         proxyuser = @user
-        proxyuser = @user + ":" + @pass if @pass != ""
+        proxyuser << ":" << @pass if @pass && !@pass.empty?
       end
 
       options = {
