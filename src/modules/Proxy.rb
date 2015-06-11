@@ -1,17 +1,10 @@
 # encoding: utf-8
 
-# File:	modules/Proxy.ycp
-# Package:	Network configuration
-# Summary:	Proxy data
-# Authors:	Michal Svec <msvec@suse.cz>
-#
-# $Id$
-#
-# Configures FTP and HTTP proxies via sysconfig & SuSEconfig
-# and /root/.curlrc (for YOU)
 require "yast"
 
 module Yast
+  # Configures FTP and HTTP proxies via sysconfig
+  # and /root/.curlrc (for YOU)
   class ProxyClass < Module
     def main
       textdomain "proxy"
@@ -107,13 +100,6 @@ module Yast
         end
       end
 
-      # Read /root/.wgetrc
-      # YOU uses curl(1)
-      # user = SCR::Read(.root.wgetrc.proxy_user);
-      # if(user == nil) user = "";
-      # pass = SCR::Read(.root.wgetrc.proxy_passwd);
-      # if(pass == nil) pass = "";
-
       true
     end
 
@@ -206,12 +192,6 @@ module Yast
 
       #user can't relogin in installation and update, do not show the msg then (bnc#486037, bnc#543469)
       ProxyFinishPopup(true) if Mode.normal
-
-      # Update /root/.wgetrc
-      # YOU uses curl(1)
-      # SCR::Write(.root.wgetrc.proxy_user, user);
-      # SCR::Write(.root.wgetrc.proxy_passwd, pass);
-      # SCR::Write(.root.wgetrc, nil);
 
       @modified = false
 
@@ -470,20 +450,7 @@ module Yast
               ""
             )
           )
-        ] 
-
-        # Summary text * /
-        # Summary::Device(sformat(_("No Proxy Domains: %1"), no) + "\n<br>" +
-        # "<p>" + ( user == "" ?
-        # 		/* Summary text * /
-        # 		_("Proxy user name is not set.") :
-        # 		/* Summary text * /
-        # 		sformat(_("Proxy User Name: %1"), user)) +
-        # "<br>" + ( pass == "" ?
-        # 		/* Summary text * /
-        # 		_("Proxy password is not set.") :
-        # 		/* Summary text * /
-        # 		_("Proxy password is set.")) ];
+        ]
       end
 
       Summary.DevicesList(ret)
