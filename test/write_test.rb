@@ -48,6 +48,35 @@ describe "Yast::ProxyClass" do
       expect(subject.WriteCurlrc).to be true
     end
 
+    it "writes proxy settings, and a comment, when proxy is enabled via InstallInfConvertor" do
+      subject.Import({ "enabled"        => true,
+                       "http_proxy"     => "proxy.example.org:3128",
+                       "proxy_user"     => nil,
+                       "proxy_password" => nil })
+
+      expect(Yast::SCR).to receive(:Write).
+        with(path_matching(/^\.root\.curlrc\..*\."comment"/), /Changed/).
+        once.and_return true
+
+      expect(Yast::SCR).to receive(:Write).
+        with(path(".root.curlrc.\"--proxy\""), "proxy.example.org:3128").
+        once.and_return true
+
+      expect(Yast::SCR).to receive(:Write).
+        with(path(".root.curlrc.\"--noproxy\""), "localhost").
+        once.and_return true
+
+      allow(Yast::SCR).to receive(:Write).
+        with(path_matching(/^\.root\.curlrc/), nil).
+        and_return true
+
+      expect(Yast::SCR).to receive(:Write).
+        with(path(".root.curlrc"), nil).
+        once.and_return true
+
+      expect(subject.WriteCurlrc).to be true
+    end
+
     it "writes a no-proxy setting" do
       subject.Import({ "enabled"    => true,
                        "http_proxy" => "proxy.example.org:3128",

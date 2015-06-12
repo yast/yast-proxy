@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Jun 11 12:01:30 UTC 2015 - mvidner@suse.com
+
+- Fixed the last change not to crash with "internal error in
+  WriteCurlrc" when installing with a proxy (boo#929868).
+- 3.1.2.2
+
+-------------------------------------------------------------------
 Thu Apr  9 15:35:53 UTC 2015 - mvidner@suse.com
 
 - Write also --noproxy to .curlrc otherwise it is ignored even if
