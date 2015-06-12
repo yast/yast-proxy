@@ -536,7 +536,6 @@ module Yast
         HSpacing(5)
       )
 
-      #    if(standalone == true)
       Wizard.SetContentsButtons(
         caption,
         contents,
@@ -547,9 +546,6 @@ module Yast
       Wizard.SetNextButton(:next, Label.OKButton)
       Wizard.SetAbortButton(:abort, Label.CancelButton)
       Wizard.HideBackButton
-      #     else
-      # 	Wizard::SetContentsButtons(caption, contents, help,
-      # 		Label::BackButton(), Label::OKButton());
 
       # #103841, relaxed. now avoiding only quotes
       # #337048 allow using space as well
