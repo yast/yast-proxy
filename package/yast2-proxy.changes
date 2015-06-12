@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Fri Jun 12 16:13:53 UTC 2015 - mvidner@suse.com
+
+- If PROXY_ENABLED is not set, interpret it as disabled,
+  like the rest of the system does (boo#934925).
+- Internal cleanups:
+  - Got rid of autotools.
+  - Converted legacy testsuite to RSpec.
+  - Moved code out of clients for better testability.
+- 3.1.6
+
+-------------------------------------------------------------------
 Thu Jun 11 12:01:30 UTC 2015 - mvidner@suse.com
 
 - Fixed the last change not to crash with "internal error in
