@@ -25,11 +25,10 @@ Source0:        %{name}-%{version}.tar.bz2
 
 Group:          System/YaST
 License:        GPL-2.0+
-# should be required by devtools
-BuildRequires:  perl-XML-Writer pkgconfig rpm
 BuildRequires:  update-desktop-files
-BuildRequires:  yast2-devtools >= 3.1.10
+BuildRequires:  yast2-buildtools >= 3.1.10
 BuildRequires:  rubygem(rspec)
+BuildRequires:  rubygem(yast-rake)
 
 BuildRequires:  yast2
 Requires:       yast2
@@ -37,7 +36,6 @@ Requires:       yast2
 # we split off that one
 Conflicts:      yast2-network < 2.22.6
 
-PreReq:         /bin/rm
 BuildArch:      noarch
 
 Requires:       yast2-ruby-bindings >= 1.0.0
@@ -51,12 +49,13 @@ This package contains the YaST2 component for proxy configuration.
 %prep
 %setup -n %{name}-%{version}
 
+%check
+rake test:unit
+
 %build
-%yast_build
 
 %install
-%yast_install
-
+rake install DESTDIR="%{buildroot}"
 
 %files
 %defattr(-,root,root)
@@ -68,7 +67,6 @@ This package contains the YaST2 component for proxy configuration.
 %{yast_scrconfdir}/*.scr
 %{yast_schemadir}/autoyast/rnc/proxy.rnc
 
-%dir %{yast_docdir}
-%{yast_docdir}/COPYING
+%doc %{yast_docdir}
 
 %changelog
