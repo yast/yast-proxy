@@ -1,4 +1,5 @@
 TESTS = \
+  read_test.rb \
   test_proxy_return_code_test.rb \
   write_test.rb
 
