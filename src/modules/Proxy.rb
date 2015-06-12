@@ -75,7 +75,7 @@ module Yast
       @no = "" if @no == nil
       @enabled = Convert.to_string(
         SCR.Read(path(".sysconfig.proxy.PROXY_ENABLED"))
-      ) != "no"
+      ) == "yes"
 
       # Read /root/.curlrc
       if Ops.greater_than(SCR.Read(path(".target.size"), "/root/.curlrc"), 0)

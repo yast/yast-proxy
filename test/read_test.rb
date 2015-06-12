@@ -29,7 +29,7 @@ describe "Yast::ProxyClass" do
 
       expect(Yast::SCR).to receive(:Read).
         with(path(".sysconfig.proxy.PROXY_ENABLED")).
-        and_return nil
+        and_return "yes"
 
       expect(Yast::SCR).to receive(:Read).
         with(path(".target.size"), "/root/.curlrc").
