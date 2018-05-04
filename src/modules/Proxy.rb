@@ -29,17 +29,28 @@ module Yast
       @pass = ""
     end
 
-    # no-proxy domains; reader
+    # domains that should not be proxied; reader
     # @return [String]
-    def no
-      @no
+    def no_proxy_domains
+      clean_up_no_proxy(@no)
     end
 
-    # no-proxy domains; writer
+    # domains that should not be proxied; writer
     # @param value [String]
-    def no=(value)
-      @no = value
+    def no_proxy_domains=(value)
+      @no = clean_up_no_proxy(value)
     end
+
+    # Compatibility:
+    publish :variable => :no, :type => "string"
+
+    # we need "publish :variable" but it defines an attr_accessor
+    # so let's undefine it
+    remove_method :no
+    remove_method :"no="
+    alias_method :no, :no_proxy_domains
+    alias_method :"no=", :"no_proxy_domains="
+
     # Display popup at the end of the proxy configuration
     # @param [Boolean] modified true if proxy settings have been modified
     def ProxyFinishPopup(modified)
@@ -82,7 +93,7 @@ module Yast
       @https = "" if @https == nil
       @ftp = Convert.to_string(SCR.Read(path(".sysconfig.proxy.FTP_PROXY")))
       @ftp = "" if @ftp == nil
-      self.no = SCR.Read(path(".sysconfig.proxy.NO_PROXY")) || ""
+      self.no_proxy_domains = SCR.Read(path(".sysconfig.proxy.NO_PROXY")) || ""
       @enabled = Convert.to_string(
         SCR.Read(path(".sysconfig.proxy.PROXY_ENABLED"))
       ) == "yes"
@@ -118,7 +129,7 @@ module Yast
       SCR.Write(path(".sysconfig.proxy.HTTP_PROXY"), @http)
       SCR.Write(path(".sysconfig.proxy.HTTPS_PROXY"), @https)
       SCR.Write(path(".sysconfig.proxy.FTP_PROXY"), @ftp)
-      SCR.Write(path(".sysconfig.proxy.NO_PROXY"), no)
+      SCR.Write(path(".sysconfig.proxy.NO_PROXY"), no_proxy_domains)
       SCR.Write(path(".sysconfig.proxy"), nil)
     end
 
@@ -142,7 +153,7 @@ module Yast
         # bnc#305163
         "--proxy"      => @http,
         # bsc#923788
-        "--noproxy"    => no
+        "--noproxy"    => no_proxy_domains
       }
 
       # proxy is used, write /root/.curlrc
@@ -220,7 +231,7 @@ module Yast
       @http = Ops.get_string(settings, "http_proxy", "")
       @https = Ops.get_string(settings, "https_proxy", "")
       @ftp = Ops.get_string(settings, "ftp_proxy", "")
-      self.no = Ops.get_string(settings, "no_proxy", "localhost")
+      self.no_proxy_domains = Ops.get_string(settings, "no_proxy", "localhost")
       @user = Ops.get_string(settings, "proxy_user", "")
       @pass = Ops.get_string(settings, "proxy_password", "")
 
@@ -411,7 +422,7 @@ module Yast
         "http_proxy"     => @http,
         "https_proxy"    => @https,
         "ftp_proxy"      => @ftp,
-        "no_proxy"       => no,
+        "no_proxy"       => no_proxy_domains,
         "proxy_user"     => @user,
         "proxy_password" => @pass
       }
@@ -490,7 +501,7 @@ module Yast
         "http_proxy"  => @http,
         "HTTPS_PROXY" => @https,
         "FTP_PROXY"   => @ftp,
-        "NO_PROXY"    => no
+        "NO_PROXY"    => no_proxy_domains
       }
     end
 
@@ -512,6 +523,13 @@ module Yast
     publish :function => :GetModified, :type => "boolean ()"
     publish :function => :SetModified, :type => "void ()"
     publish :function => :GetEnvironment, :type => "map <string, string> ()"
+
+    private
+
+    # Clean up the no_proxy value: not all clients ignore spaces (bsc#1089796)
+    def clean_up_no_proxy(v)
+      v.gsub(" ", "")
+    end
   end
 
   Proxy = ProxyClass.new
