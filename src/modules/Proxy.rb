@@ -29,6 +29,17 @@ module Yast
       @pass = ""
     end
 
+    # no-proxy domains; reader
+    # @return [String]
+    def no
+      @no
+    end
+
+    # no-proxy domains; writer
+    # @param value [String]
+    def no=(value)
+      @no = value
+    end
     # Display popup at the end of the proxy configuration
     # @param [Boolean] modified true if proxy settings have been modified
     def ProxyFinishPopup(modified)
@@ -71,8 +82,7 @@ module Yast
       @https = "" if @https == nil
       @ftp = Convert.to_string(SCR.Read(path(".sysconfig.proxy.FTP_PROXY")))
       @ftp = "" if @ftp == nil
-      @no = Convert.to_string(SCR.Read(path(".sysconfig.proxy.NO_PROXY")))
-      @no = "" if @no == nil
+      self.no = SCR.Read(path(".sysconfig.proxy.NO_PROXY")) || ""
       @enabled = Convert.to_string(
         SCR.Read(path(".sysconfig.proxy.PROXY_ENABLED"))
       ) == "yes"
@@ -108,7 +118,7 @@ module Yast
       SCR.Write(path(".sysconfig.proxy.HTTP_PROXY"), @http)
       SCR.Write(path(".sysconfig.proxy.HTTPS_PROXY"), @https)
       SCR.Write(path(".sysconfig.proxy.FTP_PROXY"), @ftp)
-      SCR.Write(path(".sysconfig.proxy.NO_PROXY"), @no)
+      SCR.Write(path(".sysconfig.proxy.NO_PROXY"), no)
       SCR.Write(path(".sysconfig.proxy"), nil)
     end
 
@@ -132,7 +142,7 @@ module Yast
         # bnc#305163
         "--proxy"      => @http,
         # bsc#923788
-        "--noproxy"    => @no
+        "--noproxy"    => no
       }
 
       # proxy is used, write /root/.curlrc
@@ -210,7 +220,7 @@ module Yast
       @http = Ops.get_string(settings, "http_proxy", "")
       @https = Ops.get_string(settings, "https_proxy", "")
       @ftp = Ops.get_string(settings, "ftp_proxy", "")
-      @no = Ops.get_string(settings, "no_proxy", "localhost")
+      self.no = Ops.get_string(settings, "no_proxy", "localhost")
       @user = Ops.get_string(settings, "proxy_user", "")
       @pass = Ops.get_string(settings, "proxy_password", "")
 
@@ -401,7 +411,7 @@ module Yast
         "http_proxy"     => @http,
         "https_proxy"    => @https,
         "ftp_proxy"      => @ftp,
-        "no_proxy"       => @no,
+        "no_proxy"       => no,
         "proxy_user"     => @user,
         "proxy_password" => @pass
       }
@@ -480,7 +490,7 @@ module Yast
         "http_proxy"  => @http,
         "HTTPS_PROXY" => @https,
         "FTP_PROXY"   => @ftp,
-        "NO_PROXY"    => @no
+        "NO_PROXY"    => no
       }
     end
 
@@ -491,7 +501,6 @@ module Yast
     publish :variable => :http, :type => "string"
     publish :variable => :https, :type => "string"
     publish :variable => :ftp, :type => "string"
-    publish :variable => :no, :type => "string"
     publish :variable => :user, :type => "string"
     publish :variable => :pass, :type => "string"
     publish :function => :Read, :type => "boolean ()"
