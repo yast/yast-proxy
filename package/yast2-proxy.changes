@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu May 10 09:18:19 UTC 2018 - mvidner@suse.com
+
+- Clean up the no_proxy value: not all clients ignore spaces
+  (bsc#1089796)
+- 4.0.1
+
+-------------------------------------------------------------------
 Fri Apr  6 18:52:59 UTC 2018 - mfilka@suse.com
 
 - bnc#1087957 - version bump
