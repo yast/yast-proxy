@@ -15,7 +15,7 @@ X-SuSE-YaST-SortKey=
 X-SuSE-YaST-AutoInstResource=proxy
 X-SuSE-YaST-AutoInstClonable=true
 X-SuSE-YaST-AutoInstSchema=proxy.rnc
-X-SuSE-YaST-Keywords=network
+X-SuSE-YaST-Keywords=network,internet,access
 
 Icon=yast-proxy
 Exec=xdg-su -c "/sbin/yast2 proxy"
