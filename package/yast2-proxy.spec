@@ -66,6 +66,7 @@ rake install DESTDIR="%{buildroot}"
 %{yast_desktopdir}/*.desktop
 %{yast_scrconfdir}/*.scr
 %{yast_schemadir}/autoyast/rnc/proxy.rnc
+%license COPYING
 
 %doc %{yast_docdir}
 
