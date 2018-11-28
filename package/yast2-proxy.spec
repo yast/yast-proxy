@@ -17,7 +17,7 @@
 
 
 Name:           yast2-proxy
-Version:        4.0.2
+Version:        4.0.3
 Release:        0
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -66,6 +66,7 @@ rake install DESTDIR="%{buildroot}"
 %{yast_desktopdir}/*.desktop
 %{yast_scrconfdir}/*.scr
 %{yast_schemadir}/autoyast/rnc/proxy.rnc
+%{yast_icondir}
 %license COPYING
 
 %doc %{yast_docdir}
