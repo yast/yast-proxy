@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require "yast"
+require "shellwords"
 
 module Yast
   # Configures FTP and HTTP proxies via sysconfig
@@ -280,51 +281,19 @@ module Yast
       test_https = https_proxy != "" && https_proxy != "http://" ? true : false
       test_ftp = ftp_proxy != "" && ftp_proxy != "http://" ? true : false
 
-      http_proxy = Builtins.mergestring(
-        Builtins.splitstring(http_proxy, "\""),
-        "\\\""
-      )
-      https_proxy = Builtins.mergestring(
-        Builtins.splitstring(https_proxy, "\""),
-        "\\\""
-      )
-      ftp_proxy = Builtins.mergestring(
-        Builtins.splitstring(ftp_proxy, "\""),
-        "\\\""
-      )
-      proxy_user = Builtins.mergestring(
-        Builtins.splitstring(proxy_user, "\""),
-        "\\\""
-      )
-      #escape also '\' character - usernames such as domain\user are causing pain to .target.bash_output
-      #and to curl - #256360
-      proxy_user = Builtins.mergestring(
-        Builtins.splitstring(proxy_user, "\\"),
-        "\\\\"
-      )
-      proxy_password = Builtins.mergestring(
-        Builtins.splitstring(proxy_password, "\""),
-        "\\\""
-      )
-
-      # enclose user:password into quotes, it may contain special characters (#338264)
-      user_pass = proxy_user != "" ?
-        Ops.add(
-          Ops.add(
-            Ops.add(" --proxy-user '", proxy_user),
-            proxy_password != "" ? Ops.add(":", proxy_password) : ""
-          ),
-          "'"
-        ) :
-        ""
+      user_pass = ""
+      if proxy_user != ""
+        user_pass = " --proxy-user #{proxy_user.shellescape}" +
+        user_pass << ":#{proxy_password.shellescape}" if proxy_password != ""
+      end
 
       # timeout for the connection
       timeout_sec = 90
       # %1 = http or ftp proxy, %2 = user:password if any, %3 = URL
-      command = "curl --verbose --proxy %1 %2 --connect-timeout %3 --url %4"
+      command = "/usr/bin/curl --verbose --proxy %1 %2 --connect-timeout %3 --url %4"
       http_command = Builtins.sformat(
         command,
-        http_proxy,
+        http_proxy.shellescape,
         user_pass,
         timeout_sec,
         "http://www.novell.com"
@@ -332,14 +301,14 @@ module Yast
       # adding option --insecure to accept the certificate without asking
       https_command = Builtins.sformat(
         command,
-        https_proxy,
+        https_proxy.shellescape,
         user_pass,
         timeout_sec,
         "https://secure-www.novell.com --insecure"
       )
       ftp_command = Builtins.sformat(
         command,
-        ftp_proxy,
+        ftp_proxy.shellescape,
         user_pass,
         timeout_sec,
         "ftp://ftp.novell.com"
