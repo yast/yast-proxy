@@ -20,6 +20,7 @@ X-SuSE-YaST-Keywords=network,internet,access
 Icon=yast-proxy
 Exec=xdg-su -c "/sbin/yast2 proxy"
 
-Name=Proxy
-GenericName=Configure a proxy
+Name=YaST Proxy
+GenericName=Proxy
+Comment=Configure a proxy
 StartupNotify=true
