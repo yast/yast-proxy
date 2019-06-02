@@ -53,7 +53,7 @@ module Yast
       # Change configuration (run AutoSequence)
       elsif @func == "Change"
         Wizard.CreateDialog
-        Wizard.SetDesktopTitleAndIcon("org.openSUSE.YaST.Proxy")
+        Wizard.SetDesktopTitleAndIcon("org.opensuse.yast.Proxy")
         @ret = ProxyMainDialog(true)
         UI.CloseDialog
       # return required package list

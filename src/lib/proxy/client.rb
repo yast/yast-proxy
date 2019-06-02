@@ -148,7 +148,7 @@ module Yast
       Proxy.Read
 
       Wizard.CreateDialog
-      Wizard.SetDesktopTitleAndIcon("org.openSUSE.YaST.Proxy")
+      Wizard.SetDesktopTitleAndIcon("org.opensuse.yast.Proxy")
       Wizard.SetNextButton(:next, Label.FinishButton)
 
       # main ui function
