@@ -27,7 +27,7 @@ Url:            https://github.com/yast/yast-proxy
 Source0:        %{name}-%{version}.tar.bz2
 
 BuildRequires:  update-desktop-files
-BuildRequires:  yast2-buildtools >= 3.1.10
+BuildRequires:  yast2-buildtools >= 4.2.2
 BuildRequires:  rubygem(rspec)
 BuildRequires:  rubygem(yast-rake)
 BuildRequires:  yast2
