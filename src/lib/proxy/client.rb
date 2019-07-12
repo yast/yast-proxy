@@ -149,7 +149,6 @@ module Yast
 
       Wizard.CreateDialog
       Wizard.SetDesktopTitleAndIcon("proxy")
-      Wizard.SetNextButton(:next, Label.FinishButton)
 
       # main ui function
       ret = ProxyMainDialog(true)
