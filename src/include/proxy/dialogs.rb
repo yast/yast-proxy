@@ -762,7 +762,7 @@ module Yast
 
     # Determines whether running in installation mode
     #
-    # We do not use Stage.initial because of firstboot, which which runs in 'installation' mode
+    # We do not use Stage.initial because of firstboot, which runs in 'installation' mode
     # but in 'firstboot' stage.
     #
     # @return [Boolean] Boolean if running in installation or update mode
