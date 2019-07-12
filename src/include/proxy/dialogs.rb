@@ -376,7 +376,7 @@ module Yast
     # If modified, ask for confirmation
     # @return true if abort is confirmed
     def ReallyAbortCond
-      !modified || Popup.ReallyAbort(true)
+      (!modified || installation?) || Popup.ReallyAbort(true)
     end
 
     # Proxy dialog
@@ -541,11 +541,9 @@ module Yast
         contents,
         help,
         Label.BackButton,
-        Label.FinishButton
+        Label.NextButton
       )
-      Wizard.SetNextButton(:next, Label.OKButton)
-      Wizard.SetAbortButton(:abort, Label.CancelButton)
-      Wizard.HideBackButton
+      adjust_wizard_buttons unless installation?
 
       # #103841, relaxed. now avoiding only quotes
       # #337048 allow using space as well
@@ -751,6 +749,25 @@ module Yast
       end
 
       deep_copy(ret)
+    end
+
+  private
+
+    # Sets OK/Cancel wizard buttons
+    def adjust_wizard_buttons
+      Wizard.SetNextButton(:next, Label.OKButton)
+      Wizard.SetAbortButton(:abort, Label.CancelButton)
+      Wizard.HideBackButton
+    end
+
+    # Determines whether running in installation mode
+    #
+    # We do not use Stage.initial because of firstboot, which runs in 'installation' mode
+    # but in 'firstboot' stage.
+    #
+    # @return [Boolean] Boolean if running in installation or update mode
+    def installation?
+      Mode.installation || Mode.update
     end
   end
 end
