@@ -14,6 +14,7 @@ configure
 configure.ac
 /coverage/
 depcomp
+doc/autodocs
 install-sh
 *.pot
 libtool
@@ -23,6 +24,7 @@ missing
 mkinstalldirs
 stamp-h*
 Makefile.am.common
+.yardoc/
 *.ami
 *.bz2
 .dep
