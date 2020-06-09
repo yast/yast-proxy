@@ -386,15 +386,19 @@ module Yast
     # Dump the Routing settings to a map, for autoinstallation use.
     # @return autoinstallation settings
     def Export
-      settings = {
-        "enabled"        => @enabled,
-        "http_proxy"     => @http,
-        "https_proxy"    => @https,
-        "ftp_proxy"      => @ftp,
-        "no_proxy"       => no_proxy_domains,
-        "proxy_user"     => @user,
-        "proxy_password" => @pass
-      }
+      if @enabled
+        settings = {
+          "enabled"        => true,
+          "http_proxy"     => @http,
+          "https_proxy"    => @https,
+          "ftp_proxy"      => @ftp,
+          "no_proxy"       => no_proxy_domains,
+          "proxy_user"     => @user,
+          "proxy_password" => @pass
+        }
+      else
+        settings = { "enabled" => false }
+      end
       deep_copy(settings)
     end
 
