@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require "yast"
 
 # This is a client for autoinstallation. It takes its arguments,
@@ -88,7 +86,7 @@ module Yast
       Builtins.y2milestone("Proxy auto finished")
       Builtins.y2milestone("----------------------------------------")
 
-      deep_copy(@ret) 
+      deep_copy(@ret)
 
       # EOF
     end
@@ -98,6 +96,7 @@ module Yast
     def Modified
       Proxy.modified
     end
+
     def ProxySummary
       summary = ""
       nc = Summary.NotConfigured

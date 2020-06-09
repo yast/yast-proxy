@@ -1,4 +1,4 @@
-srcdir = File.expand_path("../../src", __FILE__)
+srcdir = File.expand_path("../src", __dir__)
 y2dirs = ENV.fetch("Y2DIR", "").split(":")
 ENV["Y2DIR"] = y2dirs.unshift(srcdir).join(":")
 
@@ -13,7 +13,7 @@ if ENV["COVERAGE"]
   SimpleCov.start
 
   # for coverage we need to load all ruby files
-  src_location = File.expand_path("../../src", __FILE__)
+  src_location = File.expand_path("../src", __dir__)
   # note that clients/ are excluded because they run too eagerly by design
   Dir["#{src_location}/{include,lib,modules}/**/*.rb"].each do |f|
     require_relative f

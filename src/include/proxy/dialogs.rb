@@ -1,13 +1,11 @@
-# encoding: utf-8
-
-# File:	include/proxy/dialogs.ycp
-# Package:	Proxy configuration
-# Authors:	Michal Svec <msvec@suse.cz>
+# File:  include/proxy/dialogs.ycp
+# Package:  Proxy configuration
+# Authors:  Michal Svec <msvec@suse.cz>
 #
 # $Id$
 module Yast
   module ProxyDialogsInclude
-    def initialize_proxy_dialogs(include_target)
+    def initialize_proxy_dialogs(_include_target)
       Yast.import "UI"
 
       textdomain "proxy"
@@ -128,23 +126,23 @@ module Yast
       while ret != :ok
         ret = UI.UserInput
 
-        if ret == :details
-          if showDetails
-            UI.ReplaceWidget(Id(:rp), Empty())
-            UI.ChangeWidget(Id(:details), :Label, detailsStringOff)
-          else
-            UI.ReplaceWidget(
-              Id(:rp),
-              HBox(
-                HSpacing(0.5),
-                HWeight(1, RichText(Opt(:plainText), details)),
-                HSpacing(0.5)
-              )
+        next unless ret == :details
+
+        if showDetails
+          UI.ReplaceWidget(Id(:rp), Empty())
+          UI.ChangeWidget(Id(:details), :Label, detailsStringOff)
+        else
+          UI.ReplaceWidget(
+            Id(:rp),
+            HBox(
+              HSpacing(0.5),
+              HWeight(1, RichText(Opt(:plainText), details)),
+              HSpacing(0.5)
             )
-            UI.ChangeWidget(Id(:details), :Label, detailsStringOn)
-          end
-          showDetails = !showDetails
+          )
+          UI.ChangeWidget(Id(:details), :Label, detailsStringOn)
         end
+        showDetails = !showDetails
       end
 
       UI.CloseDialog
@@ -162,9 +160,7 @@ module Yast
       proxy_retcode = ""
       # getting the return code string from the stderr
       Builtins.foreach(Builtins.splitstring(proxy_ret_stderr, "\r?\n")) do |proxy_stderr|
-        if Builtins.regexpmatch(proxy_stderr, "HTTP/[0-9.]+ [0-9]+")
-          proxy_retcode = Builtins.regexpsub(proxy_stderr, ".*(HTTP.*)", "\\1")
-        end
+        proxy_retcode = Builtins.regexpsub(proxy_stderr, ".*(HTTP.*)", "\\1") if Builtins.regexpmatch(proxy_stderr, "HTTP/[0-9.]+ [0-9]+")
       end
 
       Builtins.y2milestone("Proxy %1 test: %2", test_type, proxy_retcode)
@@ -179,13 +175,13 @@ module Yast
       end
 
       # known good return code
-      if Builtins.contains(@return_codes_good, retcode)
-        return true 
-        # known bad return code
-      elsif Builtins.contains(@return_codes_bad, retcode)
+      return true if Builtins.contains(@return_codes_good, retcode)
+
+      # known bad return code
+      if Builtins.contains(@return_codes_bad, retcode)
         # Error message,
-        #	%1 is a string "HTTP", "HTTPS" or "FTP"
-        #	%2 is an error string such as "HTTP/1.0 403 Forbidden"
+        #  %1 is a string "HTTP", "HTTPS" or "FTP"
+        #  %2 is an error string such as "HTTP/1.0 403 Forbidden"
         ErrorPopupGeneric(
           Builtins.sformat(
             _(
@@ -197,21 +193,21 @@ module Yast
           proxy_ret_stderr
         )
         return false
-      else
-        # Unknown return code,
-        #	%1 is the string HTTP, "HTTPS" or FTP,
-        #	%2 is an error string such as "HTTP/1.0 403 Forbidden"
-        ErrorPopupGeneric(
-          Builtins.sformat(
-            _(
-              "An unknown error occurred during the %1 proxy test.\nProxy return code: %2.\n"
-            ),
-            test_type,
-            proxy_retcode
-          ),
-          proxy_ret_stderr
-        )
       end
+
+      # Unknown return code,
+      #  %1 is the string HTTP, "HTTPS" or FTP,
+      #  %2 is an error string such as "HTTP/1.0 403 Forbidden"
+      ErrorPopupGeneric(
+        Builtins.sformat(
+          _(
+            "An unknown error occurred during the %1 proxy test.\nProxy return code: %2.\n"
+          ),
+          test_type,
+          proxy_retcode
+        ),
+        proxy_ret_stderr
+      )
 
       nil
     end
@@ -221,92 +217,84 @@ module Yast
     #
     # @return [Boolean] true if successful
     def TestProxySettings
-      if @enabled
-        UI.OpenDialog(
-          # An informative popup label diring the proxy testings
-          Left(Label(_("Testing the current proxy settings...")))
+      # Actually it doesn't make sense to test the proxy settings when proxy is off
+      return true unless @enabled
+
+      UI.OpenDialog(
+        # An informative popup label diring the proxy testings
+        Left(Label(_("Testing the current proxy settings...")))
+      )
+      ret = Proxy.RunTestProxy(@http, @https, @ftp, @user, @pass)
+      UI.CloseDialog
+
+      # curl error
+      if Ops.get_boolean(ret, ["HTTP", "tested"], true) == true
+        if Ops.get_integer(ret, ["HTTP", "exit"], 1) != 0
+          # TRANSLATORS: Error popup message
+          ErrorPopupGeneric(
+            _("An error occurred during the HTTP proxy test."),
+            Ops.get_string(ret, ["HTTP", "stderr"], "")
+          )
+          UI.SetFocus(Id(:http))
+          return false
+        # curl works - proxy error
+        elsif !TestProxyReturnCode(
+          "HTTP",
+          Ops.get_string(ret, ["HTTP", "stderr"], "")
         )
-        ret = Proxy.RunTestProxy(@http, @https, @ftp, @user, @pass)
-        UI.CloseDialog
-
-        # curl error
-        if Ops.get_boolean(ret, ["HTTP", "tested"], true) == true
-          if Ops.get_integer(ret, ["HTTP", "exit"], 1) != 0
-            # TRANSLATORS: Error popup message
-            ErrorPopupGeneric(
-              _("An error occurred during the HTTP proxy test."),
-              Ops.get_string(ret, ["HTTP", "stderr"], "")
-            )
-            UI.SetFocus(Id(:http))
-            return false
-          else
-            # curl works - proxy error
-            if !TestProxyReturnCode(
-                "HTTP",
-                Ops.get_string(ret, ["HTTP", "stderr"], "")
-              )
-              UI.SetFocus(Id(:http))
-              return false
-            end
-          end
+          UI.SetFocus(Id(:http))
+          return false
         end
-
-        if Ops.get_boolean(ret, ["HTTPS", "tested"], true) == true
-          # curl error
-          if Ops.get_integer(ret, ["HTTPS", "exit"], 1) != 0
-            # TRANSLATORS: Error popup message
-            ErrorPopupGeneric(
-              _("An error occurred during the HTTPS proxy test."),
-              Ops.get_string(ret, ["HTTPS", "stderr"], "")
-            )
-            UI.SetFocus(Id(:https))
-            return false
-          else
-            # curl works - proxy error
-            if !TestProxyReturnCode(
-                "HTTPS",
-                Ops.get_string(ret, ["HTTPS", "stderr"], "")
-              )
-              UI.SetFocus(Id(:https))
-              return false
-            end
-          end
-        end
-
-        if Ops.get_boolean(ret, ["FTP", "tested"], true) == true
-          # curl error
-          if Ops.get_integer(ret, ["FTP", "exit"], 1) != 0
-            # TRANSLATORS: Error popup message
-            ErrorPopupGeneric(
-              _("An error occurred during the FTP proxy test."),
-              Ops.get_string(ret, ["FTP", "stderr"], "")
-            )
-            UI.SetFocus(Id(:ftp))
-            return false
-          else
-            # curl works - proxy error
-            if !TestProxyReturnCode(
-                "FTP",
-                Ops.get_string(ret, ["FTP", "stderr"], "")
-              )
-              UI.SetFocus(Id(:ftp))
-              return false
-            end
-          end
-        end
-
-        # Popup message
-        Popup.Message(_("Proxy settings work correctly."))
-      else
-        # Actually it doesn't make sense to test the proxy settings when proxy is off
-        return true
       end
 
-      nil
+      if Ops.get_boolean(ret, ["HTTPS", "tested"], true) == true
+        # curl error
+        if Ops.get_integer(ret, ["HTTPS", "exit"], 1) != 0
+          # TRANSLATORS: Error popup message
+          ErrorPopupGeneric(
+            _("An error occurred during the HTTPS proxy test."),
+            Ops.get_string(ret, ["HTTPS", "stderr"], "")
+          )
+          UI.SetFocus(Id(:https))
+          return false
+        # curl works - proxy error
+        elsif !TestProxyReturnCode(
+          "HTTPS",
+          Ops.get_string(ret, ["HTTPS", "stderr"], "")
+        )
+          UI.SetFocus(Id(:https))
+          return false
+        end
+      end
+
+      if Ops.get_boolean(ret, ["FTP", "tested"], true) == true
+        # curl error
+        if Ops.get_integer(ret, ["FTP", "exit"], 1) != 0
+          # TRANSLATORS: Error popup message
+          ErrorPopupGeneric(
+            _("An error occurred during the FTP proxy test."),
+            Ops.get_string(ret, ["FTP", "stderr"], "")
+          )
+          UI.SetFocus(Id(:ftp))
+          return false
+        # curl works - proxy error
+        elsif !TestProxyReturnCode(
+          "FTP",
+          Ops.get_string(ret, ["FTP", "stderr"], "")
+        )
+          UI.SetFocus(Id(:ftp))
+          return false
+        end
+      end
+
+      # Popup message
+      Popup.Message(_("Proxy settings work correctly."))
+
+      true
     end
 
     def InitSameProxy
-      #We have the same (non-empty) proxy URL for all protocols
+      # We have the same (non-empty) proxy URL for all protocols
       if @http != @prefill && @http == @https && @https == @ftp
         UI.ChangeWidget(Id(:same_proxy), :Value, true)
         UI.ChangeWidget(Id(:https), :Enabled, false)
@@ -347,7 +335,7 @@ module Yast
       Builtins.foreach(proxy_list) do |one_proxy|
         one_proxy = String.CutBlanks(one_proxy)
         # IP/netmask
-        if Builtins.findfirstof(one_proxy, "/") != nil
+        if !Builtins.findfirstof(one_proxy, "/").nil?
           tmp = Builtins.splitstring(one_proxy, "/")
           hostname = Ops.get(tmp, 0, "")
           netmask = Ops.get(tmp, 1, "")
@@ -356,9 +344,7 @@ module Yast
         else
           hostname = one_proxy
           # .domain.name case
-          if Builtins.findfirstof(hostname, ".") == 0
-            hostname = Builtins.substring(hostname, 1)
-          end
+          hostname = Builtins.substring(hostname, 1) if Builtins.findfirstof(hostname, ".") == 0
         end
         Builtins.y2milestone("hostname %1, netmask %2", hostname, netmask)
         validate = false if !Address.Check(hostname)
@@ -382,7 +368,7 @@ module Yast
     # Proxy dialog
     # @param [Boolean] standalone true if not run from another ycp client
     # @return dialog result
-    def ProxyMainDialog(standalone)
+    def ProxyMainDialog(_standalone)
       @enabled = Proxy.enabled
       @http = Proxy.http
       @https = Proxy.https
@@ -403,9 +389,9 @@ module Yast
         Ops.add(
           Ops.add(
             _(
-              "<p>Configure your Internet proxy (caching) settings here.</p>\n" +
-                "<p><b>Note:</b> It is generally recommended to relogin for the settings to take effect, \n" +
-                "however in some cases the application may pick up new settings immediately. Please check \n" +
+              "<p>Configure your Internet proxy (caching) settings here.</p>\n" \
+                "<p><b>Note:</b> It is generally recommended to relogin for the settings to take effect, \n" \
+                "however in some cases the application may pick up new settings immediately. Please check \n" \
                 "what your application (web browser, ftp client,...) supports. </p>"
             ) +
               # Proxy dialog help 2/8
@@ -424,15 +410,15 @@ module Yast
               ) +
               # Proxy dialog help 5/8
               _(
-                "<p>If you check <b>Use the Same Proxy for All Protocols</b>, it is\n" +
-                  "enough to fill in the HTTP proxy URL. It will be used for all protocols\n" +
+                "<p>If you check <b>Use the Same Proxy for All Protocols</b>, it is\n" \
+                  "enough to fill in the HTTP proxy URL. It will be used for all protocols\n" \
                   "(HTTP, HTTPS and FTP).\n"
               ),
             # Proxy dialog help 6/8
             Builtins.sformat(
               _(
-                "<p><b>No Proxy Domains</b> is a comma-separated list of domains\n" +
-                  "for which the requests should be made directly without caching,\n" +
+                "<p><b>No Proxy Domains</b> is a comma-separated list of domains\n" \
+                  "for which the requests should be made directly without caching,\n" \
                   "for example, <i>%1</i>.</p>\n"
               ),
               "localhost, .intranet.example.com, www.example.com"
@@ -440,17 +426,19 @@ module Yast
           ),
           # Proxy dialog help 7/8
           _(
-            "<p>If you are using a proxy server with authorization, enter\n" +
-              "the <b>Proxy User Name</b> and <b>Proxy Password</b>. A valid username\n" +
+            "<p>If you are using a proxy server with authorization, enter\n" \
+              "the <b>Proxy User Name</b> and <b>Proxy Password</b>. A valid username\n" \
               "consists of printable ASCII characters only (except for quotation marks).</p>\n"
           )
         ),
         # Proxy dialog help 8/8
-        !Mode.installation ?
+        if !Mode.installation
           _(
             "<p>Press <b>Test Proxy Settings</b> to test\nthe current configuration for HTTP, HTTPS, and FTP proxy.</p> \n"
-          ) :
+          )
+        else
           ""
+        end
       )
 
       display_info = UI.GetDisplayInfo
@@ -529,9 +517,11 @@ module Yast
           ),
           VSpacing(s),
           # Test Proxy Settings - push button
-          !Mode.installation ?
-            PushButton(Id("test_proxy"), _("Test Pr&oxy Settings")) :
+          if !Mode.installation
+            PushButton(Id("test_proxy"), _("Test Pr&oxy Settings"))
+          else
             Empty()
+          end
         ),
         HSpacing(5)
       )
@@ -564,9 +554,7 @@ module Yast
       UI.ChangeWidget(Id(:user), :ValidChars, _ValidCharsUsername)
       UI.ChangeWidget(Id(:frame1), :Enabled, @enabled)
       UI.ChangeWidget(Id(:frame2), :Enabled, @enabled)
-      if !Mode.installation
-        UI.ChangeWidget(Id("test_proxy"), :Enabled, @enabled)
-      end
+      UI.ChangeWidget(Id("test_proxy"), :Enabled, @enabled) if !Mode.installation
       InitSameProxy()
 
       if @enabled == true
@@ -576,44 +564,43 @@ module Yast
       end
 
       ret = nil
-      while true
+      loop do
         ret = UI.UserInput
         QueryWidgets()
 
         # abort?
-        if ret == :abort || ret == :cancel || ret == :back
-          if ReallyAbortCond()
-            break
-          else
-            next
-          end
-        end
-        if ret == :enabled
+        case ret
+        when :abort, :cancel, :back
+          break if ReallyAbortCond()
+
+          next
+        when :enabled
           UI.ChangeWidget(Id(:frame1), :Enabled, @enabled)
           UI.ChangeWidget(Id(:frame2), :Enabled, @enabled)
           UI.ChangeWidget(Id("test_proxy"), :Enabled, @enabled)
           InitSameProxy()
           next
-        elsif ret == :same_proxy
+        when :same_proxy
           UI.ChangeWidget(Id(:https), :Value, @prefill)
           UI.ChangeWidget(Id(:ftp), :Value, @prefill)
           UI.ChangeWidget(Id(:https), :Enabled, !@same_proxy)
           UI.ChangeWidget(Id(:ftp), :Enabled, !@same_proxy)
           next
         # next
-        elsif ret == :next || ret == "test_proxy"
+        when :next, "test_proxy"
           @http = "" if @http == @prefill
           @https = "" if @https == @prefill
           @ftp = "" if @ftp == @prefill
 
           break if @enabled == false
+
           if @http == "" && @https == "" && @ftp == ""
             # Popup error text - http, https and ftp proxy URLs are blank
             if !Popup.ContinueCancel(
-                _(
-                  "Proxy is enabled, but no proxy URL has been specified.\nReally use these settings?"
-                )
+              _(
+                "Proxy is enabled, but no proxy URL has been specified.\nReally use these settings?"
               )
+            )
               next
             end
           else
@@ -623,13 +610,13 @@ module Yast
 
             if password_inside && ret != "test_proxy"
               if !Popup.ContinueCancel(
-                  _(
-                    "Security warning:\n" +
-                      "Username and password will be stored unencrypted\n" +
-                      "in a worldwide readable plaintext file.\n" +
-                      "Really use these settings?"
-                  )
+                _(
+                  "Security warning:\n" \
+                    "Username and password will be stored unencrypted\n" \
+                    "in a worldwide readable plaintext file.\n" \
+                    "Really use these settings?"
                 )
+              )
                 next
               end
             end
@@ -696,16 +683,16 @@ module Yast
               next
             end
           end
-          if @no != "" && @no != nil
+          if @no != "" && !@no.nil?
             if !ValidateNoProxyDomains(@no)
-              #Translators: no proxy domain is a domain that can be accessed without proxy
+              # Translators: no proxy domain is a domain that can be accessed without proxy
               Popup.Error(
                 _(
-                  "One or more no proxy domains are invalid. \n" +
-                    "Check if all domains match one of the following:\n" +
-                    "* IP address\n" +
-                    "* IP address/netmask\n" +
-                    "* Fully qualified hostname\n" +
+                  "One or more no proxy domains are invalid. \n" \
+                    "Check if all domains match one of the following:\n" \
+                    "* IP address\n" \
+                    "* IP address/netmask\n" \
+                    "* Fully qualified hostname\n" \
                     "* Domain name prefixed by '.'"
                 )
               )
@@ -714,14 +701,9 @@ module Yast
             end
           end
 
-          if ret == :next
-            break
-          elsif ret == "test_proxy"
-            TestProxySettings()
-          end
-        # back
-        elsif ret == :back
-          break
+          break if ret == :next
+
+          TestProxySettings() if ret == "test_proxy"
         else
           Builtins.y2error("unexpected retcode: %1", ret)
           next
@@ -733,7 +715,6 @@ module Yast
           Builtins.y2debug("not modified")
           return deep_copy(ret)
         end
-
 
         Proxy.enabled = @enabled
         if @enabled
