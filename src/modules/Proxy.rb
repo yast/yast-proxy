@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require "yast"
 require "shellwords"
 
@@ -43,7 +41,7 @@ module Yast
     end
 
     # Compatibility:
-    publish :variable => :no, :type => "string"
+    publish variable: :no, type: "string"
 
     # we need "publish :variable" but it defines an attr_accessor
     # so let's undefine it
@@ -73,9 +71,7 @@ module Yast
     # @example ChangedComment("lan") -> # Changed by YaST2 module lan 1.1.2000"
     def ChangedComment(modul)
       ret = "\n# Changed by YaST2"
-      if modul != nil && modul != ""
-        ret << " module " << modul
-      end
+      ret << " module " << modul if !modul.nil? && modul != ""
       out = Convert.to_map(
         SCR.Execute(path(".target.bash_output"), "/bin/date '+%x'")
       )
@@ -89,11 +85,11 @@ module Yast
     def Read
       # Read /etc/sysconfig/proxy
       @http = Convert.to_string(SCR.Read(path(".sysconfig.proxy.HTTP_PROXY")))
-      @http = "" if @http == nil
+      @http = "" if @http.nil?
       @https = Convert.to_string(SCR.Read(path(".sysconfig.proxy.HTTPS_PROXY")))
-      @https = "" if @https == nil
+      @https = "" if @https.nil?
       @ftp = Convert.to_string(SCR.Read(path(".sysconfig.proxy.FTP_PROXY")))
-      @ftp = "" if @ftp == nil
+      @ftp = "" if @ftp.nil?
       self.no_proxy_domains = SCR.Read(path(".sysconfig.proxy.NO_PROXY")) || ""
       @enabled = Convert.to_string(
         SCR.Read(path(".sysconfig.proxy.PROXY_ENABLED"))
@@ -106,20 +102,18 @@ module Yast
         )
       end
 
-      @user = "" if @user == nil
+      @user = "" if @user.nil?
 
       if Builtins.issubstring(@user, ":")
         @pass = Builtins.regexpsub(@user, "^.*:(.*)$", "\\1")
         @user = Builtins.regexpsub(@user, "^(.*):.*$", "\\1")
       end
 
-      @pass = "" if @pass == nil
-      if @user == nil
+      @pass = "" if @pass.nil?
+      if @user.nil?
         @user = ""
-      else
-        if Builtins.regexpmatch(@user, "^.*\\\\.*$")
-          @user = Builtins.regexpsub(@user, "^(.*)\\\\(.*)$", "\\1\\2")
-        end
+      elsif Builtins.regexpmatch(@user, "^.*\\\\.*$")
+        @user = Builtins.regexpsub(@user, "^(.*)\\\\(.*)$", "\\1\\2")
       end
 
       true
@@ -138,8 +132,9 @@ module Yast
     # see also http://curl.haxx.se/docs/manpage.html#-K for escaping rules
     def EscapeForCurlrc(s)
       return nil if s.nil?
+
       Builtins.mergestring(Builtins.splitstring(s, "\\"),
-                           "\\\\")
+        "\\\\")
     end
 
     def WriteCurlrc
@@ -166,11 +161,11 @@ module Yast
 
           SCR.Write(path(".root.curlrc") + option, EscapeForCurlrc(value))
 
-          if value != nil && write_comment
-            SCR.Write(path(".root.curlrc") + option + "comment",
-                      ChangedComment("proxy"))
-            write_comment = false
-          end
+          next unless !value.nil? && write_comment
+
+          SCR.Write(path(".root.curlrc") + option + "comment",
+            ChangedComment("proxy"))
+          write_comment = false
         end
         # proxy is not used, remove proxy-related settings
       else
@@ -198,7 +193,7 @@ module Yast
       caption = _("Saving Proxy Configuration")
       # sleep for longer time, so that progress does not disappear right afterwards
       # but only when Progress is visible
-      sl = Progress.status == true ? 500 : 0
+      sl = (Progress.status == true) ? 500 : 0
 
       Progress.New(caption, " ", Builtins.size(steps), steps, [], "")
 
@@ -212,14 +207,13 @@ module Yast
       Builtins.sleep(sl)
       Progress.NextStage
 
-      #user can't relogin in installation and update, do not show the msg then (bnc#486037, bnc#543469)
+      # user can't relogin in installation and update, do not show the msg then (bnc#486037, bnc#543469)
       ProxyFinishPopup(true) if Mode.normal
 
       @modified = false
 
       true
     end
-
 
     # Get all settings from a map.
     # When called by <name>_auto (preparing autoinstallation data)
@@ -242,32 +236,32 @@ module Yast
 
     # Runs tests of the HTTP and FTP proxy
     #
-    # @param [String] http_proxy	such as "http://cache.example.com:3128"
-    # @param [String] https_proxy	such as "http://cache.example.com:3128"
-    # @param [String] ftp_proxy	such as "http://cache.example.com:3128"
-    # @param [String] proxy_user	such as "proxy-username"
-    # @param [String] proxy_password	such as "proxy-password"
+    # @param [String] http_proxy  such as "http://cache.example.com:3128"
+    # @param [String] https_proxy  such as "http://cache.example.com:3128"
+    # @param [String] ftp_proxy  such as "http://cache.example.com:3128"
+    # @param [String] proxy_user  such as "proxy-username"
+    # @param [String] proxy_password  such as "proxy-password"
     #
     # @return [Hash <String, Hash{String => Object>}] with results of the test
     #
     # **Structure:**
     #
     #     return = $[
-    #     	"HTTP" : $[
-    #     		"exit" : _exit_code,
-    #     		"stdout" : _stdout,
-    #     		"stderr" : _stderr,
-    #     	],
-    #     	"HTTPS" : $[
-    #     		"exit" : _exit_code,
-    #     		"stdout" : _stdout,
-    #     		"stderr" : _stderr,
-    #     	],
-    #     	"FTP" : $[
-    #     		"exit" : _exit_code,
-    #     		"stdout" : _stdout,
-    #     		"stderr" : _stderr,
-    #     	],
+    #       "HTTP" : $[
+    #         "exit" : _exit_code,
+    #         "stdout" : _stdout,
+    #         "stderr" : _stderr,
+    #       ],
+    #       "HTTPS" : $[
+    #         "exit" : _exit_code,
+    #         "stdout" : _stdout,
+    #         "stderr" : _stderr,
+    #       ],
+    #       "FTP" : $[
+    #         "exit" : _exit_code,
+    #         "stdout" : _stdout,
+    #         "stderr" : _stderr,
+    #       ],
     #      ]
     def RunTestProxy(http_proxy, https_proxy, ftp_proxy, proxy_user, proxy_password)
       # /usr/bin/curl --verbose
@@ -277,14 +271,16 @@ module Yast
       # --url https://secure-www.novell.com --insecure
       ret = {}
 
-      test_http = http_proxy != "" && http_proxy != "http://" ? true : false
-      test_https = https_proxy != "" && https_proxy != "http://" ? true : false
-      test_ftp = ftp_proxy != "" && ftp_proxy != "http://" ? true : false
+      test_http = (http_proxy != "" && http_proxy != "http://") ? true : false
+      test_https = (https_proxy != "" && https_proxy != "http://") ? true : false
+      test_ftp = (ftp_proxy != "" && ftp_proxy != "http://") ? true : false
 
       user_pass = ""
       if proxy_user != ""
-        user_pass = " --proxy-user #{proxy_user.shellescape}" +
-        user_pass << ":#{proxy_password.shellescape}" if proxy_password != ""
+        if proxy_password != ""
+          user_pass = " --proxy-user #{proxy_user.shellescape}" +
+            user_pass << ":#{proxy_password.shellescape}"
+        end
       end
 
       # timeout for the connection
@@ -322,8 +318,8 @@ module Yast
           "HTTP",
           Convert.convert(
             SCR.Execute(path(".target.bash_output"), http_command),
-            :from => "any",
-            :to   => "map <string, any>"
+            from: "any",
+            to:   "map <string, any>"
           )
         )
       else
@@ -331,7 +327,7 @@ module Yast
         Ops.set(
           ret,
           "HTTP",
-          { "exit" => 0, "stderr" => "", "stdout" => "", "tested" => false }
+          "exit" => 0, "stderr" => "", "stdout" => "", "tested" => false
         )
       end
       Builtins.y2milestone("Done.")
@@ -344,8 +340,8 @@ module Yast
           "HTTPS",
           Convert.convert(
             SCR.Execute(path(".target.bash_output"), https_command),
-            :from => "any",
-            :to   => "map <string, any>"
+            from: "any",
+            to:   "map <string, any>"
           )
         )
       else
@@ -353,7 +349,7 @@ module Yast
         Ops.set(
           ret,
           "HTTPS",
-          { "exit" => 0, "stderr" => "", "stdout" => "", "tested" => false }
+          "exit" => 0, "stderr" => "", "stdout" => "", "tested" => false
         )
       end
       Builtins.y2milestone("Done.")
@@ -366,8 +362,8 @@ module Yast
           "FTP",
           Convert.convert(
             SCR.Execute(path(".target.bash_output"), ftp_command),
-            :from => "any",
-            :to   => "map <string, any>"
+            from: "any",
+            to:   "map <string, any>"
           )
         )
       else
@@ -375,7 +371,7 @@ module Yast
         Ops.set(
           ret,
           "FTP",
-          { "exit" => 0, "stderr" => "", "stdout" => "", "tested" => false }
+          "exit" => 0, "stderr" => "", "stdout" => "", "tested" => false
         )
       end
       Builtins.y2milestone("Done.")
@@ -386,29 +382,31 @@ module Yast
     # Dump the Routing settings to a map, for autoinstallation use.
     # @return autoinstallation settings
     def Export
-      settings = {
-        "enabled"        => @enabled,
-        "http_proxy"     => @http,
-        "https_proxy"    => @https,
-        "ftp_proxy"      => @ftp,
-        "no_proxy"       => no_proxy_domains,
-        "proxy_user"     => @user,
-        "proxy_password" => @pass
-      }
+      settings = if @enabled
+        {
+          "enabled"        => true,
+          "http_proxy"     => @http,
+          "https_proxy"    => @https,
+          "ftp_proxy"      => @ftp,
+          "no_proxy"       => no_proxy_domains,
+          "proxy_user"     => @user,
+          "proxy_password" => @pass
+        }
+      else
+        { "enabled" => false }
+      end
       deep_copy(settings)
     end
 
     # Create proxy summary
     # @return summary text
     def Summary
-      ret = []
-
       # Summary text
-      if !@enabled
-        ret = [Summary.Device(_("Proxy is disabled."), "")]
+      ret = if !@enabled
+        [Summary.Device(_("Proxy is disabled."), "")]
       else
         # Summary text
-        ret = [
+        [
           Summary.Device(
             _("Proxy is enabled."),
             Ops.add(
@@ -417,25 +415,31 @@ module Yast
                   Ops.add(
                     "",
                     # Summary text
-                    @http != "" ?
+                    if @http != ""
                       Ops.add(
                         Builtins.sformat(_("HTTP Proxy: %1"), @http),
                         "<br>"
-                      ) :
+                      )
+                    else
                       ""
+                    end
                   ),
                   # Summary text
-                  @https != "" ?
+                  if @https != ""
                     Ops.add(
                       Builtins.sformat(_("HTTPS Proxy: %1"), @https),
                       "<br>"
-                    ) :
+                    )
+                  else
                     ""
+                  end
                 ),
                 # Summary text
-                @ftp != "" ?
-                  Ops.add(Builtins.sformat(_("FTP Proxy: %1"), @ftp), "<br>") :
+                if @ftp != ""
+                  Ops.add(Builtins.sformat(_("FTP Proxy: %1"), @ftp), "<br>")
+                else
                   ""
+                end
               ),
               ""
             )
@@ -451,6 +455,7 @@ module Yast
     def GetModified
       @modified
     end
+
     # Function sets internal variable, which indicates, that any
     # settings were modified, to "true"
     def SetModified
@@ -474,26 +479,26 @@ module Yast
       }
     end
 
-    publish :variable => :proposal_valid, :type => "boolean"
-    publish :variable => :write_only, :type => "boolean"
-    publish :variable => :modified, :type => "boolean"
-    publish :variable => :enabled, :type => "boolean"
-    publish :variable => :http, :type => "string"
-    publish :variable => :https, :type => "string"
-    publish :variable => :ftp, :type => "string"
-    publish :variable => :user, :type => "string"
-    publish :variable => :pass, :type => "string"
-    publish :function => :Read, :type => "boolean ()"
-    publish :function => :Write, :type => "boolean ()"
-    publish :function => :Import, :type => "boolean (map)"
-    publish :function => :RunTestProxy, :type => "map <string, map <string, any>> (string, string, string, string, string)"
-    publish :function => :Export, :type => "map ()"
-    publish :function => :Summary, :type => "string ()"
-    publish :function => :GetModified, :type => "boolean ()"
-    publish :function => :SetModified, :type => "void ()"
-    publish :function => :GetEnvironment, :type => "map <string, string> ()"
+    publish variable: :proposal_valid, type: "boolean"
+    publish variable: :write_only, type: "boolean"
+    publish variable: :modified, type: "boolean"
+    publish variable: :enabled, type: "boolean"
+    publish variable: :http, type: "string"
+    publish variable: :https, type: "string"
+    publish variable: :ftp, type: "string"
+    publish variable: :user, type: "string"
+    publish variable: :pass, type: "string"
+    publish function: :Read, type: "boolean ()"
+    publish function: :Write, type: "boolean ()"
+    publish function: :Import, type: "boolean (map)"
+    publish function: :RunTestProxy, type: "map <string, map <string, any>> (string, string, string, string, string)"
+    publish function: :Export, type: "map ()"
+    publish function: :Summary, type: "string ()"
+    publish function: :GetModified, type: "boolean ()"
+    publish function: :SetModified, type: "void ()"
+    publish function: :GetEnvironment, type: "map <string, string> ()"
 
-    private
+  private
 
     # Clean up the no_proxy value: not all clients ignore spaces (bsc#1089796)
     def clean_up_no_proxy(v)

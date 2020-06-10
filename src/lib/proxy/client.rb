@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require "yast"
 
 # Main file for proxy configuration.
@@ -133,7 +131,7 @@ module Yast
       # Finish
       Builtins.y2milestone("Proxy module finished")
       Builtins.y2milestone("----------------------------------------")
-      deep_copy(@ret) 
+      deep_copy(@ret)
 
       # EOF
     end
@@ -161,15 +159,13 @@ module Yast
       deep_copy(ret)
     end
 
-    def EnableHandler(options)
-      options = deep_copy(options)
+    def EnableHandler(_options)
       Proxy.enabled = true
       Proxy.modified = true
       true
     end
 
-    def DisableHandler(options)
-      options = deep_copy(options)
+    def DisableHandler(_options)
       Proxy.enabled = false
       Proxy.modified = true
       true
@@ -182,34 +178,34 @@ module Yast
       # TODO: maybe we should validate the values
       Builtins.foreach(options) do |option, value|
         case option
-          when "http"
-            Builtins.y2milestone(
-              "Setting HTTP proxy to '%1'",
-              clear ? "" : option
-            )
-            Proxy.http = clear ? "" : value
-            Proxy.modified = true
-          when "https"
-            Builtins.y2milestone(
-              "Setting HTTPS proxy to '%1'",
-              clear ? "" : option
-            )
-            Proxy.https = clear ? "" : value
-            Proxy.modified = true
-          when "ftp"
-            Builtins.y2milestone(
-              "Setting FTP proxy to '%1'",
-              clear ? "" : option
-            )
-            Proxy.ftp = clear ? "" : value
-            Proxy.modified = true
-          when "noproxy"
-            Builtins.y2milestone(
-              "Setting NO proxy to '%1'",
-              clear ? "" : option
-            )
-            Proxy.no = clear ? "" : value
-            Proxy.modified = true
+        when "http"
+          Builtins.y2milestone(
+            "Setting HTTP proxy to '%1'",
+            clear ? "" : option
+          )
+          Proxy.http = clear ? "" : value
+          Proxy.modified = true
+        when "https"
+          Builtins.y2milestone(
+            "Setting HTTPS proxy to '%1'",
+            clear ? "" : option
+          )
+          Proxy.https = clear ? "" : value
+          Proxy.modified = true
+        when "ftp"
+          Builtins.y2milestone(
+            "Setting FTP proxy to '%1'",
+            clear ? "" : option
+          )
+          Proxy.ftp = clear ? "" : value
+          Proxy.modified = true
+        when "noproxy"
+          Builtins.y2milestone(
+            "Setting NO proxy to '%1'",
+            clear ? "" : option
+          )
+          Proxy.no = clear ? "" : value
+          Proxy.modified = true
         end
       end
 
@@ -225,7 +221,7 @@ module Yast
         Proxy.user = Ops.get(options, "username", "")
         Proxy.pass = Ops.get(options, "password")
 
-        if Proxy.pass == nil
+        if Proxy.pass.nil?
           # ask the user
 
           # translators: command line prompt for entering a password
@@ -235,8 +231,7 @@ module Yast
       true
     end
 
-    def SummaryHandler(options)
-      options = deep_copy(options)
+    def SummaryHandler(_options)
       Yast.import "RichText"
 
       CommandLine.Print(RichText.Rich2Plain(Proxy.Summary))
