@@ -78,14 +78,6 @@ module Yast
       ] # HTTP Version Not Supported
     end
 
-    # from OnlineUpdateDialogs.ycp
-    # Function opens the generic error dialog including the
-    # message with the [Details >>] button. It handles pressing
-    # the button itself.
-    #
-    # @param string message with the short error message
-    # @param string details with all of the error details
-
     def modified
       !(Proxy.http == @http && Proxy.ftp == @ftp && Proxy.no == @no &&
         Proxy.https == @https &&
@@ -94,6 +86,13 @@ module Yast
         Proxy.enabled == @enabled)
     end
 
+    # from OnlineUpdateDialogs.ycp
+    # Function opens the generic error dialog including the
+    # message with the [Details >>] button. It handles pressing
+    # the button itself.
+    #
+    # @param [String] message with the short error message
+    # @param [String] details with all of the error details
     def ErrorPopupGeneric(message, details)
       # Informative label
       details = _("No details available.") if Builtins.size(details) == 0
@@ -366,7 +365,7 @@ module Yast
     end
 
     # Proxy dialog
-    # @param [Boolean] standalone true if not run from another ycp client
+    # @param [Boolean] _standalone true if not run from another ycp client
     # @return dialog result
     def ProxyMainDialog(_standalone)
       @enabled = Proxy.enabled
