@@ -4,27 +4,41 @@ ENV["Y2DIR"] = y2dirs.unshift(srcdir).join(":")
 
 require "yast/rspec"
 
+RSpec.configure do |config|
+  config.mock_with :rspec do |mocks|
+    # If you misremember a method name both in code and in tests,
+    # will save you.
+    # https://relishapp.com/rspec/rspec-mocks/v/3-0/docs/verifying-doubles/partial-doubles
+    #
+    # With graceful degradation for RSpec 2
+    mocks.verify_partial_doubles = true if mocks.respond_to?(:verify_partial_doubles=)
+  end
+end
+
 if ENV["COVERAGE"]
   require "simplecov"
-  SimpleCov.configure do
-    # Don't measure the tests themselves. We should have named them /spec/.
+  SimpleCov.start do
     add_filter "/test/"
   end
-  SimpleCov.start
 
-  # for coverage we need to load all ruby files
   src_location = File.expand_path("../src", __dir__)
-  # note that clients/ are excluded because they run too eagerly by design
-  Dir["#{src_location}/{include,lib,modules}/**/*.rb"].each do |f|
-    require_relative f
-  end
+  # track all ruby files under src
+  SimpleCov.track_files("#{src_location}/**/*.rb")
 
-  # use coveralls for on-line code coverage reporting at Travis CI
-  if ENV["TRAVIS"]
-    require "coveralls"
+  # additionally use the LCOV format for on-line code coverage reporting at CI
+  if ENV["CI"] || ENV["COVERAGE_LCOV"]
+    require "simplecov-lcov"
+
+    SimpleCov::Formatter::LcovFormatter.config do |c|
+      c.report_with_single_file = true
+      # this is the default Coveralls GitHub Action location
+      # https://github.com/marketplace/actions/coveralls-github-action
+      c.single_report_path = "coverage/lcov.info"
+    end
+
     SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
       SimpleCov::Formatter::HTMLFormatter,
-      Coveralls::SimpleCov::Formatter
+      SimpleCov::Formatter::LcovFormatter
     ]
   end
 end
