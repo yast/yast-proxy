@@ -273,8 +273,8 @@ module Yast
       # /usr/bin/curl --verbose
       # --proxy http://server_name:port_number
       # --proxy-user user:password
-      # --url http://www.novell.com or ftp://ftp.novell.com | suggested for HTTP or FTP test
-      # --url https://secure-www.novell.com --insecure
+      # --url http://www.suse.com or ftp://ftp.suse.com | suggested for HTTP or FTP test
+      # --url https://www.suse.com --insecure
       ret = {}
 
       test_http = (http_proxy != "" && http_proxy != "http://") ? true : false
@@ -298,7 +298,7 @@ module Yast
         http_proxy.shellescape,
         user_pass,
         timeout_sec,
-        "http://www.novell.com"
+        "http://www.suse.com"
       )
       # adding option --insecure to accept the certificate without asking
       https_command = Builtins.sformat(
@@ -306,14 +306,14 @@ module Yast
         https_proxy.shellescape,
         user_pass,
         timeout_sec,
-        "https://secure-www.novell.com --insecure"
+        "https://www.suse.com --insecure"
       )
       ftp_command = Builtins.sformat(
         command,
         ftp_proxy.shellescape,
         user_pass,
         timeout_sec,
-        "ftp://ftp.novell.com"
+        "ftp://ftp.suse.com"
       )
 
       Builtins.y2milestone("Running HTTP_PROXY test...")
