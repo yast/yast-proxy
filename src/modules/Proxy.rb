@@ -5,7 +5,6 @@ module Yast
   # Configures FTP and HTTP proxies via sysconfig
   # and /root/.curlrc (for YOU)
   class ProxyClass < Module
-
     # @return [Boolan] Whether the configuration should be copied to the target system
     attr_accessor :to_target
 
