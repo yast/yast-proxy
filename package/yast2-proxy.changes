@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Jun  9 08:04:48 UTC 2021 - Knut Anderssen <kanderssen@suse.com>
+
+- Added 'to_target' variable which will determine whether the
+  configuration should be written to the target system at the end
+  of the installation or not (bsc#1185016).
+- 4.3.3
+
+-------------------------------------------------------------------
 Mon Aug 10 16:55:44 CEST 2020 - schubi@suse.de
 
 - AutoYaST: Added supplements: autoyast(proxy) into the spec file
