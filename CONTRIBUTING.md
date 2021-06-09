@@ -14,7 +14,7 @@ Bug Reports
 If you find a problem, please report it either using
 [Bugzilla](https://bugzilla.suse.com/enter_bug.cgi?format=guided&product=openSUSE+Factory&component=YaST2)
 or [GitHub issues](../../issues). (For Bugzilla, use the [simplified
-registration](https://secure-www.novell.com/selfreg/jsp/createSimpleAccount.jsp)
+registration](https://www.suse.com/selfreg/jsp/createSimpleAccount.jsp)
 if you don't have an account yet.)
 
 When creating a bug report, please follow our [bug reporting
