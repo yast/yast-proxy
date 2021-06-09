@@ -5,12 +5,16 @@ module Yast
   # Configures FTP and HTTP proxies via sysconfig
   # and /root/.curlrc (for YOU)
   class ProxyClass < Module
+    # @return [Boolean] Whether the configuration should be copied to the target system
+    attr_accessor :to_target
+
     def main
       textdomain "proxy"
 
       Yast.import "Summary"
       Yast.import "Progress"
       Yast.import "Mode"
+      Yast.import "Stage"
       Yast.import "Popup"
 
       @proposal_valid = false
@@ -26,6 +30,7 @@ module Yast
       @no = ""
       @user = ""
       @pass = ""
+      @to_target = false
     end
 
     # domains that should not be proxied; reader
@@ -209,6 +214,7 @@ module Yast
 
       # user can't relogin in installation and update, do not show the msg then (bnc#486037, bnc#543469)
       ProxyFinishPopup(true) if Mode.normal
+      @to_target = true if Stage.initial
 
       @modified = false
 
