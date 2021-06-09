@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Jun 09 09:59:49 UTC 20201 - Knut Anderssen <kanderssen@suse.com>
+
+- Replace novell urls by SUSE ones (bsc#1100366)
+- 4.2.3
+
+-------------------------------------------------------------------
 Thu Aug 22 12:53:15 CEST 2019 - schubi@suse.de
 
 - Using rb_default_ruby_abi tag in the spec file in order to
