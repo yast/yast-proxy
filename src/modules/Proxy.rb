@@ -5,6 +5,10 @@ module Yast
   # Configures FTP and HTTP proxies via sysconfig
   # and /root/.curlrc (for YOU)
   class ProxyClass < Module
+
+    # @return [Boolan] Whether the configuration should be copied to the target system
+    attr_accessor :to_target
+
     def main
       textdomain "proxy"
 
@@ -26,6 +30,7 @@ module Yast
       @no = ""
       @user = ""
       @pass = ""
+      @to_target = false
     end
 
     # domains that should not be proxied; reader
