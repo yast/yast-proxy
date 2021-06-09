@@ -14,6 +14,7 @@ module Yast
       Yast.import "Summary"
       Yast.import "Progress"
       Yast.import "Mode"
+      Yast.import "Stage"
       Yast.import "Popup"
 
       @proposal_valid = false
@@ -213,6 +214,7 @@ module Yast
 
       # user can't relogin in installation and update, do not show the msg then (bnc#486037, bnc#543469)
       ProxyFinishPopup(true) if Mode.normal
+      @to_target = true if Stage.initial
 
       @modified = false
 
