@@ -214,6 +214,8 @@ module Yast
 
       # user can't relogin in installation and update, do not show the msg then (bnc#486037, bnc#543469)
       ProxyFinishPopup(true) if Mode.normal
+      # By now the configuration written to the inst-sys should be copied always to the target
+      # system, so it is set here in order to discharge others from establishing it. (bsc#1185016)
       @to_target = true if Stage.initial
 
       @modified = false
