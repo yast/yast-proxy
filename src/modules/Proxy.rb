@@ -5,12 +5,16 @@ module Yast
   # Configures FTP and HTTP proxies via sysconfig
   # and /root/.curlrc (for YOU)
   class ProxyClass < Module
+    # @return [Boolean] Whether the configuration should be copied to the target system
+    attr_accessor :to_target
+
     def main
       textdomain "proxy"
 
       Yast.import "Summary"
       Yast.import "Progress"
       Yast.import "Mode"
+      Yast.import "Stage"
       Yast.import "Popup"
 
       @proposal_valid = false
@@ -26,6 +30,7 @@ module Yast
       @no = ""
       @user = ""
       @pass = ""
+      @to_target = false
     end
 
     # domains that should not be proxied; reader
@@ -209,6 +214,9 @@ module Yast
 
       # user can't relogin in installation and update, do not show the msg then (bnc#486037, bnc#543469)
       ProxyFinishPopup(true) if Mode.normal
+      # By now the configuration written to the inst-sys should be copied always to the target
+      # system, so it is set here in order to discharge others from establishing it. (bsc#1185016)
+      @to_target = true if Stage.initial
 
       @modified = false
 
@@ -267,8 +275,8 @@ module Yast
       # /usr/bin/curl --verbose
       # --proxy http://server_name:port_number
       # --proxy-user user:password
-      # --url http://www.novell.com or ftp://ftp.novell.com | suggested for HTTP or FTP test
-      # --url https://secure-www.novell.com --insecure
+      # --url http://www.suse.com or ftp://ftp.suse.com | suggested for HTTP or FTP test
+      # --url https://www.suse.com --insecure
       ret = {}
 
       test_http = (http_proxy != "" && http_proxy != "http://") ? true : false
@@ -292,7 +300,7 @@ module Yast
         http_proxy.shellescape,
         user_pass,
         timeout_sec,
-        "http://www.novell.com"
+        "http://www.suse.com"
       )
       # adding option --insecure to accept the certificate without asking
       https_command = Builtins.sformat(
@@ -300,14 +308,14 @@ module Yast
         https_proxy.shellescape,
         user_pass,
         timeout_sec,
-        "https://secure-www.novell.com --insecure"
+        "https://www.suse.com --insecure"
       )
       ftp_command = Builtins.sformat(
         command,
         ftp_proxy.shellescape,
         user_pass,
         timeout_sec,
-        "ftp://ftp.novell.com"
+        "ftp://ftp.suse.com"
       )
 
       Builtins.y2milestone("Running HTTP_PROXY test...")
