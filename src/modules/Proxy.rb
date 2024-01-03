@@ -279,9 +279,9 @@ module Yast
       # --url https://www.suse.com --insecure
       ret = {}
 
-      test_http = (http_proxy != "" && http_proxy != "http://") ? true : false
-      test_https = (https_proxy != "" && https_proxy != "http://") ? true : false
-      test_ftp = (ftp_proxy != "" && ftp_proxy != "http://") ? true : false
+      test_http = (http_proxy != "" && http_proxy != "http://")
+      test_https = (https_proxy != "" && https_proxy != "http://")
+      test_ftp = (ftp_proxy != "" && ftp_proxy != "http://")
 
       user_pass = ""
       if proxy_user != "" && (proxy_password != "")
