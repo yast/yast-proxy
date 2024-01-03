@@ -334,16 +334,16 @@ module Yast
       Builtins.foreach(proxy_list) do |one_proxy|
         one_proxy = String.CutBlanks(one_proxy)
         # IP/netmask
-        if !Builtins.findfirstof(one_proxy, "/").nil?
+        if Builtins.findfirstof(one_proxy, "/").nil?
+          hostname = one_proxy
+          # .domain.name case
+          hostname = Builtins.substring(hostname, 1) if Builtins.findfirstof(hostname, ".") == 0
+        else
           tmp = Builtins.splitstring(one_proxy, "/")
           hostname = Ops.get(tmp, 0, "")
           netmask = Ops.get(tmp, 1, "")
 
           validate = false if !Netmask.Check(netmask)
-        else
-          hostname = one_proxy
-          # .domain.name case
-          hostname = Builtins.substring(hostname, 1) if Builtins.findfirstof(hostname, ".") == 0
         end
         Builtins.y2milestone("hostname %1, netmask %2", hostname, netmask)
         validate = false if !Address.Check(hostname)
@@ -389,9 +389,9 @@ module Yast
           Ops.add(
             _(
               "<p>Configure your Internet proxy (caching) settings here.</p>\n" \
-                "<p><b>Note:</b> It is generally recommended to relogin for the settings to take effect, \n" \
-                "however in some cases the application may pick up new settings immediately. Please check \n" \
-                "what your application (web browser, ftp client,...) supports. </p>"
+              "<p><b>Note:</b> It is generally recommended to relogin for the settings to take effect, \n" \
+              "however in some cases the application may pick up new settings immediately. Please check \n" \
+              "what your application (web browser, ftp client,...) supports. </p>"
             ) +
               # Proxy dialog help 2/8
               _(
@@ -410,15 +410,15 @@ module Yast
               # Proxy dialog help 5/8
               _(
                 "<p>If you check <b>Use the Same Proxy for All Protocols</b>, it is\n" \
-                  "enough to fill in the HTTP proxy URL. It will be used for all protocols\n" \
-                  "(HTTP, HTTPS and FTP).\n"
+                "enough to fill in the HTTP proxy URL. It will be used for all protocols\n" \
+                "(HTTP, HTTPS and FTP).\n"
               ),
             # Proxy dialog help 6/8
             Builtins.sformat(
               _(
                 "<p><b>No Proxy Domains</b> is a comma-separated list of domains\n" \
-                  "for which the requests should be made directly without caching,\n" \
-                  "for example, <i>%1</i>.</p>\n"
+                "for which the requests should be made directly without caching,\n" \
+                "for example, <i>%1</i>.</p>\n"
               ),
               "localhost, .intranet.example.com, www.example.com"
             )
@@ -426,17 +426,17 @@ module Yast
           # Proxy dialog help 7/8
           _(
             "<p>If you are using a proxy server with authorization, enter\n" \
-              "the <b>Proxy User Name</b> and <b>Proxy Password</b>. A valid username\n" \
-              "consists of printable ASCII characters only (except for quotation marks).</p>\n"
+            "the <b>Proxy User Name</b> and <b>Proxy Password</b>. A valid username\n" \
+            "consists of printable ASCII characters only (except for quotation marks).</p>\n"
           )
         ),
         # Proxy dialog help 8/8
-        if !Mode.installation
+        if Mode.installation
+          ""
+        else
           _(
             "<p>Press <b>Test Proxy Settings</b> to test\nthe current configuration for HTTP, HTTPS, and FTP proxy.</p> \n"
           )
-        else
-          ""
         end
       )
 
@@ -516,10 +516,10 @@ module Yast
           ),
           VSpacing(s),
           # Test Proxy Settings - push button
-          if !Mode.installation
-            PushButton(Id("test_proxy"), _("Test Pr&oxy Settings"))
-          else
+          if Mode.installation
             Empty()
+          else
+            PushButton(Id("test_proxy"), _("Test Pr&oxy Settings"))
           end
         ),
         HSpacing(5)
@@ -607,17 +607,15 @@ module Yast
               UrlContainPassword(@https) ||
               UrlContainPassword(@ftp)
 
-            if password_inside && ret != "test_proxy"
-              if !Popup.ContinueCancel(
+            if password_inside && ret != "test_proxy" && !Popup.ContinueCancel(
                 _(
                   "Security warning:\n" \
-                    "Username and password will be stored unencrypted\n" \
-                    "in a worldwide readable plaintext file.\n" \
-                    "Really use these settings?"
+                  "Username and password will be stored unencrypted\n" \
+                  "in a worldwide readable plaintext file.\n" \
+                  "Really use these settings?"
                 )
               )
-                next
-              end
+              next
             end
           end
           # check_*
@@ -682,22 +680,20 @@ module Yast
               next
             end
           end
-          if @no != "" && !@no.nil?
-            if !ValidateNoProxyDomains(@no)
-              # Translators: no proxy domain is a domain that can be accessed without proxy
-              Popup.Error(
-                _(
-                  "One or more no proxy domains are invalid. \n" \
-                    "Check if all domains match one of the following:\n" \
-                    "* IP address\n" \
-                    "* IP address/netmask\n" \
-                    "* Fully qualified hostname\n" \
-                    "* Domain name prefixed by '.'"
-                )
+          if @no != "" && !@no.nil? && !ValidateNoProxyDomains(@no)
+            # Translators: no proxy domain is a domain that can be accessed without proxy
+            Popup.Error(
+              _(
+                "One or more no proxy domains are invalid. \n" \
+                "Check if all domains match one of the following:\n" \
+                "* IP address\n" \
+                "* IP address/netmask\n" \
+                "* Fully qualified hostname\n" \
+                "* Domain name prefixed by '.'"
               )
-              UI.SetFocus(Id(:no))
-              next
-            end
+            )
+            UI.SetFocus(Id(:no))
+            next
           end
 
           break if ret == :next
