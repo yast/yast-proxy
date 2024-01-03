@@ -37,13 +37,6 @@ Metrics/CyclomaticComplexity:
   Max: 60
 
 # Offense count: 10
-# Cop supports --auto-correct.
-# Configuration parameters: AutoCorrect, AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
-# URISchemes: http, https
-Metrics/LineLength:
-  Max: 140
-
-# Offense count: 10
 # Configuration parameters: CountComments, ExcludedMethods.
 Metrics/MethodLength:
   Max: 320

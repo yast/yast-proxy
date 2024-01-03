@@ -159,12 +159,18 @@ module Yast
       proxy_retcode = ""
       # getting the return code string from the stderr
       Builtins.foreach(Builtins.splitstring(proxy_ret_stderr, "\r?\n")) do |proxy_stderr|
-        proxy_retcode = Builtins.regexpsub(proxy_stderr, ".*(HTTP.*)", "\\1") if Builtins.regexpmatch(proxy_stderr, "HTTP/[0-9.]+ [0-9]+")
+        if Builtins.regexpmatch(
+          proxy_stderr, "HTTP/[0-9.]+ [0-9]+"
+        )
+          proxy_retcode = Builtins.regexpsub(proxy_stderr, ".*(HTTP.*)",
+            "\\1")
+        end
       end
 
       Builtins.y2milestone("Proxy %1 test: %2", test_type, proxy_retcode)
 
-      # The default error code, replaced with the current error code got from proxy if any code found
+      # The default error code, replaced with the current error code got from
+      # proxy if any code found
       retcode = _("Unknown Error Code")
       Builtins.foreach(Builtins.splitstring(proxy_retcode, " ")) do |ret_code_part|
         if Builtins.regexpmatch(ret_code_part, "^[0-9]+$") &&
@@ -389,23 +395,28 @@ module Yast
           Ops.add(
             _(
               "<p>Configure your Internet proxy (caching) settings here.</p>\n" \
-              "<p><b>Note:</b> It is generally recommended to relogin for the settings to take effect, \n" \
-              "however in some cases the application may pick up new settings immediately. Please check \n" \
+              "<p><b>Note:</b> It is generally recommended to relogin for the " \
+              "settings to take effect, \n" \
+              "however in some cases the application may pick up new settings " \
+              "immediately. Please check \n" \
               "what your application (web browser, ftp client,...) supports. </p>"
             ) +
               # Proxy dialog help 2/8
               _(
-                "<p><b>HTTP Proxy URL</b> is the name of the proxy server for your access\nto the World Wide Web (WWW).</p>\n"
+                "<p><b>HTTP Proxy URL</b> is the name of the proxy server for your access\n" \
+                "to the World Wide Web (WWW).</p>\n"
               ) +
               # Proxy dialog help 3/8
               _(
-                "<p><b>HTTPS Proxy URL</b> is the name of the proxy server for your secured access\nto the World Wide Web (WWW).</p>\n"
+                "<p><b>HTTPS Proxy URL</b> is the name of the proxy server for your secured " \
+                "access\nto the World Wide Web (WWW).</p>\n"
               ) +
               # Proxy dialog help 3.5/8
               _("<p>Example: <i>http://proxy.example.com:3128/</i></p>") +
               # Proxy dialog help 4/8
               _(
-                "<p><b>FTP Proxy URL</b> is the name of the proxy server for your access\nto the file transfer services (FTP).</p>"
+                "<p><b>FTP Proxy URL</b> is the name of the proxy server for your access\n" \
+                "to the file transfer services (FTP).</p>"
               ) +
               # Proxy dialog help 5/8
               _(
@@ -435,7 +446,8 @@ module Yast
           ""
         else
           _(
-            "<p>Press <b>Test Proxy Settings</b> to test\nthe current configuration for HTTP, HTTPS, and FTP proxy.</p> \n"
+            "<p>Press <b>Test Proxy Settings</b> to test\n" \
+            "the current configuration for HTTP, HTTPS, and FTP proxy.</p> \n"
           )
         end
       )

@@ -212,7 +212,8 @@ module Yast
       Builtins.sleep(sl)
       Progress.NextStage
 
-      # user can't relogin in installation and update, do not show the msg then (bnc#486037, bnc#543469)
+      # user can't relogin in installation and update, do not show the msg then
+      # (bnc#486037, bnc#543469)
       ProxyFinishPopup(true) if Mode.normal
       # By now the configuration written to the inst-sys should be copied always to the target
       # system, so it is set here in order to discharge others from establishing it. (bsc#1185016)
@@ -497,7 +498,8 @@ module Yast
     publish function: :Read, type: "boolean ()"
     publish function: :Write, type: "boolean ()"
     publish function: :Import, type: "boolean (map)"
-    publish function: :RunTestProxy, type: "map <string, map <string, any>> (string, string, string, string, string)"
+    publish function: :RunTestProxy,
+      type: "map <string, map <string, any>> (string, string, string, string, string)"
     publish function: :Export, type: "map ()"
     publish function: :Summary, type: "string ()"
     publish function: :GetModified, type: "boolean ()"
