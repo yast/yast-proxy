@@ -212,7 +212,8 @@ module Yast
       Builtins.sleep(sl)
       Progress.NextStage
 
-      # user can't relogin in installation and update, do not show the msg then (bnc#486037, bnc#543469)
+      # user can't relogin in installation and update, do not show the msg then
+      # (bnc#486037, bnc#543469)
       ProxyFinishPopup(true) if Mode.normal
       # By now the configuration written to the inst-sys should be copied always to the target
       # system, so it is set here in order to discharge others from establishing it. (bsc#1185016)
@@ -279,16 +280,14 @@ module Yast
       # --url https://www.suse.com --insecure
       ret = {}
 
-      test_http = (http_proxy != "" && http_proxy != "http://") ? true : false
-      test_https = (https_proxy != "" && https_proxy != "http://") ? true : false
-      test_ftp = (ftp_proxy != "" && ftp_proxy != "http://") ? true : false
+      test_http = (http_proxy != "" && http_proxy != "http://")
+      test_https = (https_proxy != "" && https_proxy != "http://")
+      test_ftp = (ftp_proxy != "" && ftp_proxy != "http://")
 
       user_pass = ""
-      if proxy_user != ""
-        if proxy_password != ""
-          user_pass = " --proxy-user #{proxy_user.shellescape}" +
-            user_pass << ":#{proxy_password.shellescape}"
-        end
+      if proxy_user != "" && (proxy_password != "")
+        user_pass = (" --proxy-user #{proxy_user.shellescape}" +
+          user_pass) << ":#{proxy_password.shellescape}"
       end
 
       # timeout for the connection
@@ -410,9 +409,7 @@ module Yast
     # @return summary text
     def Summary
       # Summary text
-      ret = if !@enabled
-        [Summary.Device(_("Proxy is disabled."), "")]
-      else
+      ret = if @enabled
         # Summary text
         [
           Summary.Device(
@@ -423,36 +420,38 @@ module Yast
                   Ops.add(
                     "",
                     # Summary text
-                    if @http != ""
+                    if @http == ""
+                      ""
+                    else
                       Ops.add(
                         Builtins.sformat(_("HTTP Proxy: %1"), @http),
                         "<br>"
                       )
-                    else
-                      ""
                     end
                   ),
                   # Summary text
-                  if @https != ""
+                  if @https == ""
+                    ""
+                  else
                     Ops.add(
                       Builtins.sformat(_("HTTPS Proxy: %1"), @https),
                       "<br>"
                     )
-                  else
-                    ""
                   end
                 ),
                 # Summary text
-                if @ftp != ""
-                  Ops.add(Builtins.sformat(_("FTP Proxy: %1"), @ftp), "<br>")
-                else
+                if @ftp == ""
                   ""
+                else
+                  Ops.add(Builtins.sformat(_("FTP Proxy: %1"), @ftp), "<br>")
                 end
               ),
               ""
             )
           )
         ]
+      else
+        [Summary.Device(_("Proxy is disabled."), "")]
       end
 
       Summary.DevicesList(ret)
@@ -499,7 +498,8 @@ module Yast
     publish function: :Read, type: "boolean ()"
     publish function: :Write, type: "boolean ()"
     publish function: :Import, type: "boolean (map)"
-    publish function: :RunTestProxy, type: "map <string, map <string, any>> (string, string, string, string, string)"
+    publish function: :RunTestProxy,
+      type: "map <string, map <string, any>> (string, string, string, string, string)"
     publish function: :Export, type: "map ()"
     publish function: :Summary, type: "string ()"
     publish function: :GetModified, type: "boolean ()"

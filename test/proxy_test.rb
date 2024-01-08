@@ -24,7 +24,7 @@ describe "Yast::ProxyClass" do
 
     it "writes proxy settings, and a comment, when proxy is enabled" do
       subject.Import("enabled"    => true,
-                     "http_proxy" => "proxy.example.org:3128")
+        "http_proxy" => "proxy.example.org:3128")
 
       expect(Yast::SCR).to receive(:Write)
         .with(path_matching(/^\.root\.curlrc\..*\."comment"/), /Changed/)
@@ -51,9 +51,9 @@ describe "Yast::ProxyClass" do
 
     it "writes proxy settings, and a comment, when proxy is enabled via InstallInfConvertor" do
       subject.Import("enabled"        => true,
-                     "http_proxy"     => "proxy.example.org:3128",
-                     "proxy_user"     => nil,
-                     "proxy_password" => nil)
+        "http_proxy"     => "proxy.example.org:3128",
+        "proxy_user"     => nil,
+        "proxy_password" => nil)
 
       expect(Yast::SCR).to receive(:Write)
         .with(path_matching(/^\.root\.curlrc\..*\."comment"/), /Changed/)
@@ -80,8 +80,8 @@ describe "Yast::ProxyClass" do
 
     it "writes a no-proxy setting" do
       subject.Import("enabled"    => true,
-                     "http_proxy" => "proxy.example.org:3128",
-                     "no_proxy"   => "example.org,example.com,localhost")
+        "http_proxy" => "proxy.example.org:3128",
+        "no_proxy"   => "example.org,example.com,localhost")
       expect(Yast::SCR).to receive(:Write)
         .with(path(".root.curlrc.\"--noproxy\""),
           "example.org,example.com,localhost")
@@ -96,8 +96,8 @@ describe "Yast::ProxyClass" do
 
     it "writes a no-proxy setting without spaces" do
       subject.Import("enabled"    => true,
-                     "http_proxy" => "proxy.example.org:3128",
-                     "no_proxy"   => "example.org, example.com, localhost")
+        "http_proxy" => "proxy.example.org:3128",
+        "no_proxy"   => "example.org, example.com, localhost")
       expect(Yast::SCR).to receive(:Write)
         .with(path(".root.curlrc.\"--noproxy\""),
           "example.org,example.com,localhost")
@@ -112,9 +112,9 @@ describe "Yast::ProxyClass" do
 
     it "escapes user name" do
       subject.Import("enabled"        => true,
-                     "http_proxy"     => "proxy.example.org:3128",
-                     "proxy_user"     => "User\\Domain",
-                     "proxy_password" => "P")
+        "http_proxy"     => "proxy.example.org:3128",
+        "proxy_user"     => "User\\Domain",
+        "proxy_password" => "P")
 
       expect(Yast::SCR).to receive(:Write)
         .with(path(".root.curlrc.\"--proxy-user\""), "User\\\\Domain:P")

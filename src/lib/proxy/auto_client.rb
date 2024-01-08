@@ -42,36 +42,37 @@ module Yast
       Builtins.y2debug("param=%1", @param)
 
       # Create a summary
-      if @func == "Summary"
+      case @func
+      when "Summary"
         @ret = ProxySummary()
       # Reset configuration
-      elsif @func == "Reset"
+      when "Reset"
         Proxy.Import({})
         @ret = {}
       # Change configuration (run AutoSequence)
-      elsif @func == "Change"
+      when "Change"
         Wizard.CreateDialog
         Wizard.SetDesktopTitleAndIcon("org.opensuse.yast.Proxy")
         @ret = ProxyMainDialog(true)
         UI.CloseDialog
       # return required package list
-      elsif @func == "Packages"
+      when "Packages"
         @ret = {}
       # Import configuration
-      elsif @func == "Import"
+      when "Import"
         @ret = Proxy.Import(@param)
-      elsif @func == "SetModified"
+      when "SetModified"
         @ret = Proxy.SetModified
-      elsif @func == "GetModified"
+      when "GetModified"
         @ret = Proxy.GetModified
       # Read configuration (useful for cloning)
-      elsif @func == "Read"
+      when "Read"
         @ret = Proxy.Read
       # Return actual state
-      elsif @func == "Export"
+      when "Export"
         @ret = Proxy.Export
       # Write givven settings
-      elsif @func == "Write"
+      when "Write"
         Yast.import "Progress"
         @progress_orig = Progress.set(false)
         Proxy.write_only = true
