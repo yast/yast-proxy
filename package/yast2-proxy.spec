@@ -1,7 +1,7 @@
 #
 # spec file for package yast2-proxy
 #
-# Copyright (c) 2018 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2023 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -22,15 +22,15 @@ Release:        0
 Summary:        YaST2 - Proxy Configuration
 License:        GPL-2.0-or-later
 Group:          System/YaST
-Url:            https://github.com/yast/yast-proxy
+URL:            https://github.com/yast/yast-proxy
 
 Source0:        %{name}-%{version}.tar.bz2
 
 BuildRequires:  update-desktop-files
+BuildRequires:  yast2
 BuildRequires:  yast2-buildtools >= 4.2.2
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:rspec)
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:yast-rake)
-BuildRequires:  yast2
 
 Requires:       yast2
 Requires:       yast2-ruby-bindings >= 1.0.0
@@ -42,7 +42,7 @@ Supplements:    autoyast(proxy)
 
 BuildArch:      noarch
 
-%description 
+%description
 This package contains the YaST2 component for proxy configuration.
 
 %prep
