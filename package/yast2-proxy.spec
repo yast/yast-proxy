@@ -17,7 +17,7 @@
 
 
 Name:           yast2-proxy
-Version:        5.0.0
+Version:        5.0.1
 Release:        0
 Summary:        YaST2 - Proxy Configuration
 License:        GPL-2.0-or-later
@@ -26,7 +26,6 @@ Url:            https://github.com/yast/yast-proxy
 
 Source0:        %{name}-%{version}.tar.bz2
 
-BuildRequires:  update-desktop-files
 BuildRequires:  yast2-buildtools >= 4.2.2
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:rspec)
 BuildRequires:  rubygem(%{rb_default_ruby_abi}:yast-rake)
